@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+
+  "name": "Spotify Controls",
+  "description": "This extension adds play/pause and next/previous controls for Spotify web App, so that you could control music from any tab",
+  "version": "1.1.1",
+  
+  "author": ["IdeaSoftware", "Sergej Popov"],
+
+  "icons": { "16": "images/icon16.png",
+           "48": "images/icon48.png",
+          "128": "images/icon128.png" },
+  
+  "browser_action": {
+    "default_icon": "images/icon48.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+	"tabs",
+    "activeTab",
+	"https://play.spotify.com/"
+  ]
+}
