@@ -3,7 +3,7 @@
 
   "name": "Playback Controls for Spotify Web App",
   "description": "This extension adds play/pause and next/previous controls for Spotify web App, so that you could control music from any tab",
-  "version": "1.1.3",
+  "version": "1.1.4",
   
   "author": ["IdeaSoftware", "Sergej Popov"],
 
