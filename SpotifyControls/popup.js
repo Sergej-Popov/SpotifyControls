@@ -1,3 +1,8 @@
+window.SpotifyControls = {
+	updateInterval:undefined
+};
+
+
 (function($, undefined){ 
 
 
@@ -10,9 +15,12 @@
 			});
 		}
 		
-		//setInterval(function(){
+		console.log("setting interval");
+		clearInterval(SpotifyControls.updateInterval);
+		updateTrackInfo();
+		SpotifyControls.updateInterval = setInterval(function(){
 			updateTrackInfo();
-		//}, 1000);
+		}, 1000);
 		
 		
 	});
