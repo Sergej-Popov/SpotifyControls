@@ -43,6 +43,8 @@ window.SpotifyControls = {
 				$('#track-progress').width(track[0][0].progress);
 				$('#track-current').html(track[0][0].track_current);
 				$('#track-length').html(track[0][0].track_length);
+				$('#shuffle').removeClass('active').addClass(track[0][0].shuffle_state);
+				$('#repeat').removeClass('active').addClass(track[0][0].repeat_state);
 			});
 			
 		});

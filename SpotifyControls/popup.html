@@ -16,8 +16,8 @@
 		line-height: 19px;
 	}
 	#controls{
-		width:175px;
-		margin-left:52px;
+		width:250px;
+		text-align:center;
 	}
 	.control{
 		width:27px;
@@ -47,6 +47,24 @@
 	}
 	#next:hover{
 		background-position: -344px -79px;
+	}
+	#shuffle{
+		width:25px;
+		height:20px;
+		margin-top:10px;
+		background-position: -250px -340px;
+	}
+	#repeat{
+		width:25px;
+		height:20px;
+		margin-top:10px;
+		background-position: -298px -340px;
+	}
+	#shuffle.active{
+		background-position: -250px -371px;
+	}
+	#repeat.active{
+		background-position: -298px -371px;
 	}
 	#track-artist{
 		font-weight: 600;
@@ -109,6 +127,8 @@
 			<div id="previous" class="control"></div>
 			<div id="play-pause" class="control"></div>
 			<div id="next" class="control"></div>
+			<div id="shuffle" class="control"></div>
+			<div id="repeat" class="control"></div>
 		</div>
 		<div id="credits">
 			<span>Made by IdeaSoftware</span>
