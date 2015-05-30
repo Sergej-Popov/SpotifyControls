@@ -105,22 +105,38 @@
 		color:#88898c;
 		text-align:center;
 	}
+	#notification {
+		margin-top:10px;
+		text-align:center;
+		color:#88898c;
+		font-size:14px;
+	}
+	#notification a{
+		color:#88898c;
+	}
+	.hidden{
+		display:none;
+	}
     </style>
     <script src="lib/jquery-2.1.3.min.js"></script>
     <script src="popup.js"></script>
   </head>
   <body>
-	<div id=main>
+	<div id="main">
+		<div id="notification">
+			<p>This extension requires Spotify to be opened.</p>
+			<a href="#" title="Open Spotify Web App">Open Spotify Web App</a>
+		</div>
 		<div id="track-info">
-			<div><img id="track-art" src="" alt="" /></div>
+			<div><img class="hidden" id="track-art" src="images/blank.png" alt="" /></div>
 			<div id="track-artist"></div>
 			<div id="track-name"></div>
 			<div id="track">
 				<div id="track-bar">
 					<div id="track-progress"></div>
 				</div>
-				<div id="track-current"></div>
-				<div id="track-length"></div>
+				<div id="track-current">0:00</div>
+				<div id="track-length">0:00</div>
 			</div>
 		</div>
 		<div id="controls">

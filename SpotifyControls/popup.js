@@ -24,6 +24,11 @@ window.SpotifyControls = {
 		
 		
 	});
+	
+	$(document).on('click', '#notification a', function(){
+		chrome.tabs.create({ url: "http://play.spotify.com" });
+	});
+	
 
 	function updateTrackInfo()
 	{
@@ -31,8 +36,14 @@ window.SpotifyControls = {
 			url: "https://play.spotify.com/*"
 		};
 		chrome.tabs.query(queryInfo, function(tabs) {
-			if(tabs.length < 1)
+			if(tabs.length < 1) {
+				$('#notification').removeClass('hidden');
+				$('#track-art').addClass('hidden');
 				return;
+			}
+			
+			$('#notification').addClass('hidden');
+			$('#track-art').removeClass('hidden');
 			
 			var tabId = tabs[0].id;
 			chrome.tabs.executeScript(tabId, {file:'spotify.getTrackInfo.js'}, function(track){
@@ -57,8 +68,10 @@ window.SpotifyControls = {
 		};
 
 		chrome.tabs.query(queryInfo, function(tabs) {
-			if(tabs.length < 1)
+			if(tabs.length < 1){
+				chrome.tabs.create({ url: "http://play.spotify.com" });
 				return;
+			}
 			
 			var tabId = tabs[0].id;
 			var script = "document.getElementById('app-player').contentWindow.document.getElementById('" + control + "').click()";
