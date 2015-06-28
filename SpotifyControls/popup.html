@@ -6,6 +6,9 @@
 	body{
 		margin:0;
 	}
+	a{
+		color:#88898c;
+	}
 	#main{
 		background-color:#1c1c1f;
 		color:#fbfbfc;
@@ -33,13 +36,13 @@
 	#previous:hover{
 		background-position: -13px -79px;
 	}
-	#play-pause{
+	#toggle{
 		width:55px;
 		height:55px;
 		margin: 0 15px;
 		background-position: -67px -5px;
 	}
-	#play-pause:hover{
+	#toggle:hover{
 		background-position: -67px -68px;
 	}
 	#next{
@@ -117,8 +120,38 @@
 	.hidden{
 		display:none;
 	}
+	#options{
+		  color:#88898c;
+		  padding: 0 10px;
+		  font-size: 11px;
+	}
+	#options tr{
+		  line-height: 15px;
+	}
+	#options th{
+		  width: 110px;
+		  text-align:left;
+	}
+	#hotkeys{
+		  margin: 20px 0;
+		  font-size: 10px;
+	}
+	#donations{
+		 margin-top: 7px;
+	}
+	#beg{
+		vertical-align: super;
+	}
+	#paypal{
+		float: right;
+	}
+	#paypal img{
+		width:85px;
+	}
+	
     </style>
     <script src="lib/jquery-2.1.3.min.js"></script>
+    <script src="lib/console.image.min.js"></script>
     <script src="popup.js"></script>
   </head>
   <body>
@@ -141,10 +174,28 @@
 		</div>
 		<div id="controls">
 			<div id="previous" class="control"></div>
-			<div id="play-pause" class="control"></div>
+			<div id="toggle" class="control"></div>
 			<div id="next" class="control"></div>
 			<div id="shuffle" class="control"></div>
 			<div id="repeat" class="control"></div>
+		</div>
+		
+		<div id="options">
+			<div id="hotkeys">
+				<table>
+					<tr><th>Hotkeys: </th><th>Not working? - <a href="#" id="hotkeys-link" target="_blank">SetUp</a></th></tr>
+					<tr><td>Play/Pause: </td><td>Alt + Shift + P</td></tr>
+					<tr><td>Previous:   </td><td>Alt + Shift + Left</td></tr>
+					<tr><td>Next:       </td><td>Alt + Shift + Right</td></tr>
+				</table>
+			</div>
+		
+			<div id="donations">
+				<span id="beg">Like this? Buy us a beer</span>
+				<a href="#" id="paypal"><img src="/images/donate2.png" alt="donate"/></a>
+				<br />
+				<span id="rate-outer">..and please <a href="#" id="rate">rate!</a></span>
+			</div>
 		</div>
 		<div id="credits">
 			<span>Made by IdeaSoftware</span>
