@@ -1,3 +1,4 @@
+/* global jQuery */
 window.Idea = {
 	updateInterval:undefined,
 	cache:{
@@ -30,7 +31,7 @@ window.Idea = {
 (function($, undefined){ 
 	
 	setTimeout(function(){
-		console.log("No need to hack around.. This stuff is open source: https://github.com/Idea-Software/SpotifyControls");
+		console.log("No need to hack around.. This app is open source: https://github.com/Idea-Software/SpotifyControls");
 		console.log("Learned a thing or two? Buy me a beer: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRUHY87YGGRLY (PayPal donation)");
 		console.log("And don't forget to rate! https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews")
 	}, 2000)
@@ -42,11 +43,11 @@ window.Idea = {
 		
 		$('#track-progress').width($('#track-bar').width() * evt.progress);
 		$('#track-current').html(evt.current);
-		$('#shuffle').removeClass('active').addClass(evt.shuffle);
-		$('#repeat').removeClass('active').addClass(evt.repeat);
+		$('#shuffle').removeClass('active').addClass(evt.shuffle_state);
+		$('#repeat').removeClass('active').addClass(evt.repeat_state);
 		$('#track-artist').html(evt.artist);
-		$('#track-name').html(evt.name);
-		$('#track-art').attr('src', evt.img);
+		$('#track-title').html(evt.title);
+		$('#track-art').attr('src', evt.art);
 		$('#track-length').html(evt.length);
 		
 		chrome.storage.local.get('lyrics', function(flag){
@@ -66,23 +67,23 @@ window.Idea = {
 		$('#track-art').removeClass('hidden');
 		
 		$('#track-artist').html(evt.artist);
-		$('#track-name').html(evt.name);
-		$('#track-art').attr('src', evt.img);
+		$('#track-title').html(evt.title);
+		$('#track-art').attr('src', evt.art);
 		$('#lyrics').addClass('hidden');
 		
-		getLyrics(evt.artist, evt.name);
+		getLyrics(evt.artist, evt.title);
 	});
 	
-	function getLyrics(artist, track)
+	function getLyrics(artist, title)
 	{
 		$.ajax({
-			url: "http://lyrics.wikia.com/api.php?action=lyrics&artist="+artist+"&song="+track+"&fmt=json"
+			url: "http://lyrics.wikia.com/api.php?action=lyrics&artist="+artist+"&song="+title+"&fmt=json"
 		}).done(function(data) {
 			var lyrics = eval(data)
 			if(lyrics.lyrics.toLowerCase() == "not found"){
 				chrome.storage.local.remove('lyrics');
-				if(track.indexOf(" - ") > -1)
-					getLyrics(artist, track.substring(0, track.indexOf(" - ")));
+				if(title.indexOf(" - ") > -1)
+					getLyrics(artist, title.substring(0, title.indexOf(" - ")));
 			}
 			else
 				chrome.storage.local.set({'lyrics': lyrics});
