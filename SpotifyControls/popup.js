@@ -1,5 +1,8 @@
 window.Idea = {
 	updateInterval:undefined,
+	cache:{
+		lyrics: undefined
+	},
 	bus: {
 		_subscriptions:[],
 		_initialize: function(){
@@ -24,16 +27,13 @@ window.Idea = {
 	}
 };
 
-
 (function($, undefined){ 
 	
-	console.image("http://i.memecaptain.com/gend_images/iwQJDA.jpg");
 	setTimeout(function(){
-		console.log("Just kidding. This stuff is open source: https://github.com/Idea-Software/SpotifyControls");
+		console.log("No need to hack around.. This stuff is open source: https://github.com/Idea-Software/SpotifyControls");
 		console.log("Learned a thing or two? Buy me a beer: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRUHY87YGGRLY (PayPal donation)");
 		console.log("And don't forget to rate! https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews")
 	}, 2000)
-	
 	
 	Idea.bus.on("idea.track.updated", function(evt){
 		
@@ -48,8 +48,48 @@ window.Idea = {
 		$('#track-name').html(evt.name);
 		$('#track-art').attr('src', evt.img);
 		$('#track-length').html(evt.length);
+		
+		chrome.storage.local.get('lyrics', function(flag){
+			if(flag.lyrics){
+				$('#lyrics-link').attr('href', flag.lyrics.url);
+				$('#lyrics-text').html(flag.lyrics.lyrics);
+				$('#lyrics').removeClass('hidden');
+			}
+			else
+				$('#lyrics').addClass('hidden');
+		});
 	});
 	
+	Idea.bus.on("idea.track.changed", function(evt){
+		
+		$('#notification').addClass('hidden');
+		$('#track-art').removeClass('hidden');
+		
+		$('#track-artist').html(evt.artist);
+		$('#track-name').html(evt.name);
+		$('#track-art').attr('src', evt.img);
+		$('#lyrics').addClass('hidden');
+		
+		getLyrics(evt.artist, evt.name);
+	});
+	
+	function getLyrics(artist, track)
+	{
+		$.ajax({
+			url: "http://lyrics.wikia.com/api.php?action=lyrics&artist="+artist+"&song="+track+"&fmt=json"
+		}).done(function(data) {
+			var lyrics = eval(data)
+			if(lyrics.lyrics.toLowerCase() == "not found"){
+				chrome.storage.local.remove('lyrics');
+				if(track.indexOf(" - ") > -1)
+					getLyrics(artist, track.substring(0, track.indexOf(" - ")));
+			}
+			else
+				chrome.storage.local.set({'lyrics': lyrics});
+		}).fail(function(data){
+			chrome.storage.local.remove('lyrics');
+		});
+	}
 	
 	document.addEventListener('DOMContentLoaded', function() {
 		
@@ -63,13 +103,11 @@ window.Idea = {
 			if(flag.donated)
 				$('#donations').hide();
 		});
-				
 		for(var i = 0; i < controls.length; i++){
 			controls[i].addEventListener('click', function(evt) {
 				Idea.bus.send("idea.cmd.player." + evt.srcElement.id);
 			});
 		}
-		
 	});
 	
 	$(document).on('click', '#notification a', function(evt){

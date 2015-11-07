@@ -138,12 +138,14 @@ window.Idea = {
 					Idea.cache.artist = track[0][0].artist;
 					Idea.cache.name = track[0][0].name;
 					
+					
 					Idea.bus.send("idea.track.changed", changeMsg);
 				}
 		}, function(){
 			Idea.bus.send("idea.error.notab");
 		})
 	}
+	
 	
 	function execute(scripts, callback, errorCallback)
 	{
