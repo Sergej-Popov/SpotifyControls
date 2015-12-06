@@ -120,7 +120,7 @@ window.Idea = {
 					artist: track[0][0].artist,
 					name: track[0][0].name,
 					length: track[0][0].track_length,
-					img: track[0][0].art.slice(4, track[0][0].art.length-1 )
+					img: track[0][0].art.slice(5, track[0][0].art.length-2 )
 				}
 				
 				Idea.bus.send("idea.track.updated", updateMsg);
@@ -132,7 +132,7 @@ window.Idea = {
 						artist: track[0][0].artist,
 						name: track[0][0].name,
 						length: track[0][0].track_length,
-						img: track[0][0].art.slice(4, track[0][0].art.length-1 )
+						img: track[0][0].art.slice(5, track[0][0].art.length-2)
 					}
 					
 					Idea.cache.artist = track[0][0].artist;
