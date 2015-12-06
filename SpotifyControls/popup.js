@@ -39,9 +39,8 @@ window.Idea = {
 	Idea.bus.on("idea.track.updated", function(evt){
 		
 		$('#main').removeClass('no-player');
-		
 		$('#track-progress').width($('#track-bar').width() * evt.progress);
-		$('#track-current').html(evt.current);
+		$('#track-elapsed').html(evt.elapsed);
 		$('#shuffle').removeClass('active').addClass(evt.shuffle_state);
 		$('#repeat').removeClass('active').addClass(evt.repeat_state);
 		$('#track-artist').html(evt.artist);

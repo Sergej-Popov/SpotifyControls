@@ -129,8 +129,18 @@ window.Idea = {
 				if(title.indexOf(" - ") > -1)
 					getLyrics(artist, title.substring(0, title.indexOf(" - ")));
 			}
-			else
+			else{
+				var lines = lyrics.lyrics.split(/\r\n|\r|\n/).filter(function(line) {return line.replace(/\s/g, "") == "" ? false: true}).splice(0,4);
+				var lyr = "";
+				for(var i in lines)
+				{
+					if(lyr.length > 120) break;
+					lyr+=("\r\n" + lines[i].replace("[...]",""));
+				}
+				console.log(lyr);
+				lyrics.lyrics = lyr + "..";
 				chrome.storage.local.set({'lyrics': lyrics});
+			}
 		}).catch(function(err){
 			chrome.storage.local.remove('lyrics');
 		})

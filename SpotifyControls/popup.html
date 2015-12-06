@@ -127,7 +127,7 @@
 			/*cursor: pointer;*/
 		}
 		
-		#track-current {
+		#track-elapsed {
 			float: left;
 		}
 		
@@ -178,12 +178,13 @@
 			color:#ccc;
 		}
 		#lyrics p{
-			max-height:70px;
+			max-height:100px;
 			color: #88898c;
 			font-size: 12px;
 			white-space: pre-line;
 			overflow: hidden;
 			margin-top: 0;
+			margin-bottom: 0;
 			line-height: 14px;
 		}
 		
@@ -243,7 +244,7 @@
 				<div id="track-bar">
 					<div id="track-progress"></div>
 				</div>
-				<div id="track-current">0:00</div>
+				<div id="track-elapsed">0:00</div>
 				<div id="track-length">0:00</div>
 			</div>
 		</div>
@@ -258,7 +259,7 @@
 		</div>
 
 		<div id="lyrics" class="hidden">
-			<p><span id="lyrics-text"></span> <a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a><p>
+			<p><span id="lyrics-text"></span><br /><a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a><p>
 		</div>
 		<div id="options">
 			<div id="hotkeys">
