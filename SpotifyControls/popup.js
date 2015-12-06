@@ -38,8 +38,7 @@ window.Idea = {
 	
 	Idea.bus.on("idea.track.updated", function(evt){
 		
-		$('#notification').addClass('hidden');
-		$('#track-art').removeClass('hidden');
+		$('#main').removeClass('no-player');
 		
 		$('#track-progress').width($('#track-bar').width() * evt.progress);
 		$('#track-current').html(evt.current);
@@ -63,34 +62,14 @@ window.Idea = {
 	
 	Idea.bus.on("idea.track.changed", function(evt){
 		
-		$('#notification').addClass('hidden');
-		$('#track-art').removeClass('hidden');
+		$('#main').removeClass('no-player');
 		
 		$('#track-artist').html(evt.artist);
 		$('#track-title').html(evt.title);
 		$('#track-art').attr('src', evt.art);
 		$('#lyrics').addClass('hidden');
 		
-		getLyrics(evt.artist, evt.title);
 	});
-	
-	function getLyrics(artist, title)
-	{
-		$.ajax({
-			url: "http://lyrics.wikia.com/api.php?action=lyrics&artist="+artist+"&song="+title+"&fmt=json"
-		}).done(function(data) {
-			var lyrics = eval(data)
-			if(lyrics.lyrics.toLowerCase() == "not found"){
-				chrome.storage.local.remove('lyrics');
-				if(title.indexOf(" - ") > -1)
-					getLyrics(artist, title.substring(0, title.indexOf(" - ")));
-			}
-			else
-				chrome.storage.local.set({'lyrics': lyrics});
-		}).fail(function(data){
-			chrome.storage.local.remove('lyrics');
-		});
-	}
 	
 	document.addEventListener('DOMContentLoaded', function() {
 		
@@ -109,6 +88,12 @@ window.Idea = {
 				Idea.bus.send("idea.cmd.player." + evt.srcElement.id);
 			});
 		}
+	});
+	
+	$(document).on('click', '#track-bar', function(evt){
+		var target = Math.round(evt.offsetX / 210 * 100) / 100;
+		console.log(target);
+		chrome.tabs.executeScript(Idea.tabId, { code: "agent.Rewind("+target+")" }, function () { })
 	});
 	
 	$(document).on('click', '#notification a', function(evt){

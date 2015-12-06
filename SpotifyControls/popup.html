@@ -22,6 +22,10 @@
 			line-height: 19px;
 		}
 		
+		#main.no-player #track-art{
+			display: none;
+		}
+		
 		#controls {
 			width: 250px;
 			height:85px;
@@ -101,11 +105,12 @@
 			margin: 20px;
 			margin-top: 10px;
 			text-align: center;
-			height: 270px;
+			height: 30px;
 		}
 		
 		#track-art {
 			width: 210px;
+			margin: 10px 20px 0;
 		}
 		
 		#track {
@@ -119,6 +124,7 @@
 			border-radius: 3px;
 			background-color: #3e3e40;
 			margin-bottom: 10px;
+			/*cursor: pointer;*/
 		}
 		
 		#track-current {
@@ -149,8 +155,12 @@
 			text-align: center;
 			color: #88898c;
 			font-size: 14px;
+			display: none;
 		}
 		
+		#main.no-player #notification {
+			display: block;
+		}
 		#notification a {
 			color: #88898c;
 		}
@@ -162,10 +172,7 @@
 		#lyrics{
 			max-height: 85px;
     		padding: 5px 0;
-		}
-		#lyrics span{
-			font-size: 14px;
-			color:#ccc;
+			margin: 0 10px;
 		}
 		#lyrics a{
 			color:#ccc;
@@ -173,7 +180,7 @@
 		#lyrics p{
 			max-height:70px;
 			color: #88898c;
-			font-size: 11px;
+			font-size: 12px;
 			white-space: pre-line;
 			overflow: hidden;
 			margin-top: 0;
@@ -223,13 +230,13 @@
 </head>
 
 <body>
-	<div id="main">
+	<div id="main" class="no-player">
 		<div id="notification">
 			<p>This extension requires Spotify to be opened.</p>
 			<a href="#" title="Open Spotify Web App">Open Spotify Web App</a>
 		</div>
+		<img id="track-art" src="images/blank.png" alt="" />
 		<div id="track-info">
-			<div><img class="hidden" id="track-art" src="images/blank.png" alt="" /></div>
 			<div id="track-artist"></div>
 			<div id="track-title"></div>
 			<div id="track">
@@ -251,8 +258,7 @@
 		</div>
 
 		<div id="lyrics" class="hidden">
-			<span>Lyrics ( <a href="#" id="lyrics-link" target="_blank">read full at LyricWikia</a> )</span>
-			<p id="lyrics-text"></p>
+			<p><span id="lyrics-text"></span> <a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a><p>
 		</div>
 		<div id="options">
 			<div id="hotkeys">

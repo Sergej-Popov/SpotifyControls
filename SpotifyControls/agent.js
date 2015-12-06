@@ -61,6 +61,19 @@ function Agent(){
 	self.Shuffle = function(){
 		_player.contentWindow.document.getElementById('shuffle').click();
 	};
+	self.Rewind = function(target){
+		var elem = _player.contentWindow.document.querySelector('#progressbar .progress-bar');
+		// var elem = _player.contentWindow.document.querySelector('#progressbar .progress-bar-wrapper');
+		_clickAt(elem, elem.offsetWidth * target);
+	};
+	
+	var _clickAt = function(elem, x)
+	{
+		console.log("rewinding to " + x);
+		var evt = document.createEvent("MouseEvents");
+		evt.initMouseEvent("click", true, true, window, 0, 0,0,elem.offsetLeft + x,0, false,false,false,false,0,undefined);
+		elem.dispatchEvent(evt);
+	}
 	
 	self.GetArtist = function(){
 		try {
@@ -79,7 +92,7 @@ function Agent(){
 	self.GetArt = function(){
 		try {
 			var art = _player.contentWindow.document.querySelector(_newPlayer ? '#view-now-playing .cover-image' : '#cover-art .sp-image-img').style.backgroundImage;
-			return art.slice(4, art.length-1 );
+			return art.slice(5, art.length-2 );
 		} catch (error) {
 			return undefined;
 		}

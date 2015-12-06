@@ -109,15 +109,36 @@ window.Idea = {
 			setTimeout(function () { chrome.notifications.clear(notificationId, function (wasCleared) { }) }, 5000);
 		});
 	})
+	
+	Idea.bus.on("idea.track.changed", function(evt){
+				
+		getLyrics(evt.artist, evt.title);
+	});
+	
+	function getLyrics(artist, title)
+	{
+		
+		window.fetch("http://lyrics.wikia.com/api.php?action=lyrics&artist="+artist+"&song="+title+"&fmt=json")
+		.then(function(response){
+			return response.text();
+		})
+		.then(function(data){
+			var lyrics = eval(data)
+			if(lyrics.lyrics.toLowerCase() == "not found"){
+				chrome.storage.local.remove('lyrics');
+				if(title.indexOf(" - ") > -1)
+					getLyrics(artist, title.substring(0, title.indexOf(" - ")));
+			}
+			else
+				chrome.storage.local.set({'lyrics': lyrics});
+		}).catch(function(err){
+			chrome.storage.local.remove('lyrics');
+		})
+	}
 
 	chrome.notifications.onClicked.addListener(function (evt) {
 		Idea.bus.send("idea.cmd.player.next");
 	})
-	
-	// function updateTrackPosition(){
-	// 	execute([{file:"spotify.update.trackPosition.js"}],function(){ }, function(){});
-	// 	(function(id){var e = document.getElementById(id); e.dispatchEvent((function(e, x){var evt = document.createEvent("MouseEvents"); evt.initMouseEvent("click", true, true, window, 0, 0,0,e.offsetLeft + x,0, false,false,false,false,0,undefined); return evt}(e, 50))) }("track-bar"))
-	// }
 	
 	function heartBeat() {
 		
@@ -172,31 +193,4 @@ window.Idea = {
 			}
 		});
 	}
-	
-	
-	// function execute(scripts, callback, errorCallback)
-	// {
-		
-	// 	chrome.tabs.query({url: "https://play.spotify.com/*"}, function(tabs) {
-	// 		if(tabs.length > 0) {
-	// 			var tabId = tabs[0].id;
-	// 			chrome.tabs.executeScript(tabId, scripts[0], function(data){
-	// 					callback(data);
-	// 			});
-	// 		}
-	// 		else{
-	// 			chrome.tabs.query({url: "https://player.spotify.com/*"}, function(tabs) {
-	// 				if(tabs.length < 1) {
-	// 					errorCallback();
-	// 					return;
-	// 				}
-	// 				var tabId = tabs[0].id;
-	// 				chrome.tabs.executeScript(tabId, scripts[1], function(data){
-	// 					callback(data);
-	// 				});
-	// 			});
-	// 		}
-	// 	});
-	// }
-	
 } ());
