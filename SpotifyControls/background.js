@@ -71,6 +71,8 @@ window.Idea = {
 	Idea.bus.on("idea.agent.planted", function (evt) {
 		Idea.tabId = evt.tabId;
 	});
+	Idea.bus.on("idea.agent.lost", function (evt) {
+	});
 
 
 	Idea.bus.on("idea.cmd.player.toggle", function (evt) {
@@ -137,7 +139,6 @@ window.Idea = {
 					if(lyr.length > 120) break;
 					lyr+=("\r\n" + lines[i].replace("[...]",""));
 				}
-				console.log(lyr);
 				lyrics.lyrics = lyr + "..";
 				chrome.storage.local.set({'lyrics': lyrics});
 			}
@@ -197,8 +198,17 @@ window.Idea = {
 							Idea.bus.send("idea.agent.planted", { tabId: tabs[0].id });
 						});
 					}
-					else
-						Idea.bus.send("idea.agent.lost");
+					else	{
+						chrome.tabs.query({ url: "https://open.spotify.com/*" }, function (tabs) {
+							if (tabs.length > 0) {
+								chrome.tabs.executeScript(tabs[0].id, { file: "agent.js" }, function (a, b, c) {
+									Idea.bus.send("idea.agent.planted", { tabId: tabs[0].id });
+								});
+							}
+							else
+								Idea.bus.send("idea.agent.lost");
+						});
+					}
 				});
 			}
 		});

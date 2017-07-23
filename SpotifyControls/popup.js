@@ -31,18 +31,17 @@ window.Idea = {
 (function($, undefined){ 
 	
 	setTimeout(function(){
-		console.log("No need to hack around.. This app is open source: https://github.com/Idea-Software/SpotifyControls");
+		console.log("No need to hack around.. This app is open source: https://github.com/Sergej-Popov/SpotifyControls");
 		console.log("Learned a thing or two? Buy me a beer: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRUHY87YGGRLY (PayPal donation)");
 		console.log("And don't forget to rate! https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews")
 	}, 2000)
 	
 	Idea.bus.on("idea.track.updated", function(evt){
-		
 		$('#main').removeClass('no-player');
 		$('#track-progress').width($('#track-bar').width() * evt.progress);
 		$('#track-elapsed').html(evt.elapsed);
-		$('#shuffle').removeClass('active').addClass(evt.shuffle_state);
-		$('#repeat').removeClass('active').addClass(evt.repeat_state);
+		evt.shuffle_on ? $('#shuffle').addClass('active') : $('#shuffle').removeClass('active')
+		evt.repeat_on ? $('#repeat').addClass('active') : $('#repeat').removeClass('active')
 		$('#track-artist').html(evt.artist);
 		$('#track-title').html(evt.title);
 		$('#track-art').attr('src', evt.art);
@@ -89,11 +88,11 @@ window.Idea = {
 		}
 	});
 	
-	$(document).on('click', '#track-bar', function(evt){
-		var target = Math.round(evt.offsetX / 210 * 100) / 100;
-		console.log(target);
-		chrome.tabs.executeScript(Idea.tabId, { code: "agent.Rewind("+target+")" }, function () { })
-	});
+	// $(document).on('click', '#track-bar', function(evt){
+	// 	var target = Math.round(evt.offsetX / 210 * 100) / 100;
+	// 	console.log(target);
+	// 	chrome.tabs.executeScript(Idea.tabId, { code: "agent.Rewind("+target+")" }, function () { })
+	// });
 	
 	$(document).on('click', '#notification a', function(evt){
 		chrome.tabs.create({ url: "http://play.spotify.com" });
@@ -101,6 +100,10 @@ window.Idea = {
 	});
 	$(document).on('click', '#hotkeys-link', function(evt){
 		chrome.tabs.create({ url: "chrome://extensions/configureCommands" });
+		evt.preventDefault();
+	});
+	$(document).on('click', '#contribute', function(evt){
+		chrome.tabs.create({ url: "https://github.com/Sergej-Popov/SpotifyControls" });
 		evt.preventDefault();
 	});
 	$(document).on('click', '#paypal', function(evt){
