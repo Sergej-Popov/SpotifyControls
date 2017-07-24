@@ -1,0 +1,33 @@
+{
+  "name": "spotify-controls",
+  "version": "1.4.0",
+  "description": "Hotkeys, notifications and playback controls for Spotify Web App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sergej-Popov/SpotifyControls.git"
+  },
+  "author": "Sergej Popov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sergej-Popov/SpotifyControls/issues"
+  },
+  "homepage": "https://github.com/Sergej-Popov/SpotifyControls#readme",
+  "devDependencies": {
+    "@types/chrome": "0.0.47",
+    "awesome-typescript-loader": "^3.2.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "file-loader": "^0.11.2",
+    "html-loader": "^0.4.5",
+    "html-webpack-plugin": "^2.29.0",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.4.2",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.3.0"
+  },
+  "dependencies": {}
+}
