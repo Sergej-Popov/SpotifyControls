@@ -1,6 +1,7 @@
 import { Bus } from "./message-bus"
 import { Lyric } from "./lyric";
 import { Storage } from "./storage";
+import { Track } from "./track";
 
 let bus = new Bus();
 
@@ -10,17 +11,42 @@ setTimeout(function () {
 	console.log("And don't forget to rate! https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews")
 }, 2000);
 
-bus.on("idea.track.updated", async (evt: any) => {
+bus.on("idea.track.updated", async (evt: Track) => {
 	document.querySelector('#main').classList.remove('no-player');
 	(document.querySelector('#track-progress') as HTMLElement).style.width = (document.querySelector('#track-bar').clientWidth * evt.progress) + "px";
 	(document.querySelector('#volume-level') as HTMLElement).style.width = (document.querySelector('#volume-bar').clientWidth * evt.volume) + "px";
 	document.querySelector('#track-elapsed').innerHTML = evt.elapsed;
 	evt.shuffle_on ? document.querySelector('#shuffle').classList.add('active') : document.querySelector('#shuffle').classList.remove('active')
 	evt.repeat_on ? document.querySelector('#repeat').classList.add('active') : document.querySelector('#repeat').classList.remove('active')
-	evt.mute_on ? document.querySelector('#mute').classList.add('muted') : document.querySelector('#mute').classList.remove('muted')
+	if (evt.mute_on) {
+		document.querySelector('#mute').classList.add('fa-volume-off');
+		document.querySelector('#mute').classList.remove('fa-volume-up');
+	}
+	else {
+		document.querySelector('#mute').classList.add('fa-volume-up');
+		document.querySelector('#mute').classList.remove('fa-volume-off');
+	}
+	if (evt.is_playing) {
+		document.querySelector('#toggle').classList.add('fa-pause-circle-o');
+		document.querySelector('#toggle').classList.remove('fa-play-circle-o');
+	}
+	else {
+		document.querySelector('#toggle').classList.add('fa-play-circle-o');
+		document.querySelector('#toggle').classList.remove('fa-pause-circle-o');
+	}
+	if (evt.is_saved) {
+		document.querySelector('#save').classList.add('fa-check');
+		document.querySelector('#save').classList.remove('fa-plus');
+	}
+	else {
+		document.querySelector('#save').classList.add('fa-plus');
+		document.querySelector('#save').classList.remove('fa-check');
+	}
+
 	document.querySelector('#track-artist').innerHTML = evt.artist;
 	document.querySelector('#track-title').innerHTML = evt.title;
-	document.querySelector('#track-art').setAttribute('src', evt.art);
+	if (!!evt.art)
+		document.querySelector('#track-art').setAttribute('src', evt.art);
 	document.querySelector('#track-length').innerHTML = evt.length;
 
 	let lyric = await Storage.Get<Lyric>("lyric");
@@ -34,7 +60,7 @@ bus.on("idea.track.updated", async (evt: any) => {
 	}
 });
 
-bus.on("idea.track.changed", function (evt: any) {
+bus.on("idea.track.changed", function (evt: Track) {
 
 	document.querySelector('#main').classList.remove('no-player');
 
@@ -72,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		evt.preventDefault();
 	});
 
-	document.querySelector('#hotkeys-link').addEventListener("click", (evt: MouseEvent) => {
+	document.querySelector('#settings').addEventListener("click", (evt: MouseEvent) => {
 		chrome.tabs.create({ url: "chrome://extensions/configureCommands" });
 		evt.preventDefault();
 	});

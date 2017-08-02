@@ -3,233 +3,8 @@
 
 <head>
 	<title>Spotify Controls</title>
-	<style>
-		body {
-			margin: 0;
-		}
-		
-		a {
-			color: #88898c;
-		}
-		
-		#main {
-			background-color: #1c1c1f;
-			color: #fbfbfc;
-			border-radius: 3px;
-			width: 250px;
-			padding: 5px;
-			font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-			line-height: 19px;
-		}
-		
-		#main.no-player #track-art{
-			display: none;
-		}
-		
-		#controls {
-			width: 250px;
-			height:100px;
-			text-align: center;
-    		padding: 5px 0;
-		}
-		
-		.control {
-			width: 27px;
-			height: 30px;
-			background-image: url('images/sprites.png');
-			cursor: pointer;
-			display: inline-table;
-			vertical-align: middle;
-		}
-		
-		#previous {
-			background-position: -13px -16px;
-		}
-		
-		#previous:hover {
-			background-position: -13px -79px;
-		}
-		
-		#toggle {
-			width: 55px;
-			height: 55px;
-			margin: 0 15px;
-			background-position: -67px -5px;
-		}
-		
-		#toggle:hover {
-			background-position: -67px -68px;
-		}
-		
-		#next {
-			background-position: -344px -16px;
-		}
-		
-		#next:hover {
-			background-position: -344px -79px;
-		}
-		
-		#shuffle {
-			width: 25px;
-			height: 20px;
-			margin-top: 10px;
-			background-position: -250px -340px;
-		}
-		
-		#repeat {
-			width: 25px;
-			height: 20px;
-			margin-top: 10px;
-			background-position: -298px -340px;
-		}
-		
-		#shuffle.active {
-			background-position: -250px -371px;
-		}
-		
-		#repeat.active {
-			background-position: -298px -371px;
-		}
-
-		#mute {
-			width: 25px;
-			height: 20px;
-			margin-left: -23px;
-			background-position: -340px -338px;
-		}
-
-		#mute.muted {
-			background-position: -340px -369px;
-		}
-
-		#volume-bar {
-			width: 100px;
-			height: 5px;
-			border-radius: 3px;
-			background-color: #3e3e40;
-			margin-bottom: 10px;
-			display: inline-table;
-		}
-		
-		#volume-level {
-			width: 50px;
-			height: 5px;
-			border-radius: 3px;
-			background-color: #84bd00;
-		}
-		
-		#track-artist {
-			font-weight: 600;
-		}
-		
-		#track-title {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-		
-		#track-info {
-			margin: 20px;
-			margin-top: 10px;
-			text-align: center;
-			height: 30px;
-		}
-		
-		#track-art {
-			width: 210px;
-			margin: 10px 20px 0;
-		}
-		
-		#track {
-			margin-top: 5px;
-			color: #88898c;
-		}
-		
-		#track-bar {
-			width: 210px;
-			height: 5px;
-			border-radius: 3px;
-			background-color: #3e3e40;
-			margin-bottom: 10px;
-			/*cursor: pointer;*/
-		}
-		
-		#track-elapsed {
-			float: left;
-		}
-		
-		#track-length {
-			float: right;
-		}
-		
-		#track-progress {
-			width: 100px;
-			height: 5px;
-			border-radius: 3px;
-			background-color: #84bd00;
-		}
-		#notification {
-			margin-top: 10px;
-			text-align: center;
-			color: #88898c;
-			font-size: 14px;
-			display: none;
-		}
-		
-		#main.no-player #notification {
-			display: block;
-		}
-		#notification a {
-			color: #88898c;
-		}
-		
-		.hidden {
-			display: none;
-		}
-		
-		#lyrics{
-			max-height: 85px;
-    		padding: 5px 0;
-			margin: 0 10px;
-		}
-		#lyrics a{
-			color:#ccc;
-		}
-		#lyrics p{
-			max-height:100px;
-			color: #88898c;
-			font-size: 12px;
-			white-space: pre-line;
-			overflow: hidden;
-			margin-top: 0;
-			margin-bottom: 0;
-			line-height: 14px;
-		}
-		
-		#options {
-			color: #88898c;
-			padding: 0 10px;
-			font-size: 11px;
-		}
-		
-		#options tr {
-			line-height: 15px;
-		}
-		
-		#options th {
-			width: 110px;
-			text-align: left;
-		}
-		
-		#hotkeys {
-			font-size: 10px;
-			text-align: right;
-		}
-		
-		#donation {
-			vertical-align: super;
-		}
-	</style>
+	<link rel="stylesheet" href="lib/css/font-awesome.min.css"></link>
+	<link rel="stylesheet" type="text/css" href="popup.css"></link>
 	<script src="popup.js"></script>
 </head>
 
@@ -239,7 +14,7 @@
 			<p>This extension requires Spotify to be opened.</p>
 			<a href="#" title="Open Spotify Web App">Open Spotify Web App</a>
 		</div>
-		<img id="track-art" src="images/blank.png" alt="" />
+		<img id="track-art" src="images/404.jpg" alt="" />
 		<div id="track-info">
 			<div id="track-artist"></div>
 			<div id="track-title"></div>
@@ -252,15 +27,17 @@
 			</div>
 		</div>
 		<div id="controls">
-			<div>
-				<div id="previous" class="control"></div>
-				<div id="toggle" class="control"></div>
-				<div id="next" class="control"></div>
+			<div id="playback-controls">
+				<i class="fa fa-step-backward control" aria-hidden="true" title="Previous" id="previous"></i>
+				<i class="fa fa-play-circle-o control" aria-hidden="true" title="Play/Pause" id="toggle"></i>
+				<i class="fa fa-step-forward control" aria-hidden="true" title="Next" id="next"></i>
 			</div>
-			<div id="shuffle" class="control"></div>
-			<div id="repeat" class="control"></div>
+			<i class="fa fa-random control" aria-hidden="true" title="Shuffle" id="shuffle"></i>
+			<i class="fa fa-repeat control" aria-hidden="true" title="Repeat" id="repeat"></i>
+			<i class="fa fa-check control" aria-hidden="true" title="Save" id="save"></i>
 			<div>
-				<div id="mute" class="control"></div>
+
+				<i class="fa fa-volume-up control" aria-hidden="true" title="Mute" id="mute"></i>
 				<div id="volume-bar">
 					<div id="volume-level"></div>
 				</div>
@@ -268,18 +45,20 @@
 		</div>
 
 		<div id="lyrics" class="hidden">
-			<p><span id="lyrics-text"></span><br /><a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a><p>
+			<p><span id="lyrics-text"></span><br /><a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a>
+				<p>
 		</div>
 		<div id="options">
-			<div id="hotkeys">
-				<span><a href="#" id="hotkeys-link" target="_blank">SetUp Hotkeys</a></span>
-			</div>
 			<div id="help">
+				<br />
 				<span id="donation">Like this? <a href="#" id="paypal">Buy me a beer</a> ;)</span>
 				<br />
 				<span id="rate-outer">..and please <a href="#" id="rate">rate!</a> &#8902;&#8902;&#8902;&#8902;&#8902;</span>
 				<br />
 				<span id="contributions">A developer? <a href="#" id="contribute">Contribute here.</a></span>
+				<a href="#" id="settings" target="_blank">
+					<i class="fa fa-cog" aria-hidden="true" title="SetUp Hotkeys"></i>
+				</a>
 			</div>
 		</div>
 	</div>

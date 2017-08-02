@@ -1,5 +1,7 @@
 {
   "files.exclude": {
-    "dist": false
+    "dist": true,
+    "node_modules": true,
+    "uploads": true
   }
 }

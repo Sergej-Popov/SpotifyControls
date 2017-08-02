@@ -1,4 +1,4 @@
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+let CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -11,7 +11,6 @@ module.exports = {
         path: __dirname + "/dist"
     },
 
-    // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
 
     resolve: {
@@ -21,37 +20,24 @@ module.exports = {
     module: {
         rules: [
             { test: /\.ts$/, loader: "awesome-typescript-loader" },
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
     },
     watch: true,
-    watchOptions:{
+    watchOptions: {
         ignored: /node_modules/
     },
-
-    // When importing a module whose path matches one of the following, just
-    // assume a corresponding global variable exists and use that instead.
-    // This is important because it allows us to avoid bundling all of our
-    // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
         "chrome": "chrome"
     },
     plugins: [
         new CopyWebpackPlugin([
-            // {output}/file.txt
             { from: "src/popup.html" },
-            { from: "src/images", to: "images"},
-            { from: "src/manifest.json"},
-            { from: "src/key.pem"}
+            { from: "src/popup.css" },
+            { from: "src/images", to: "images" },
+            { from: "src/lib", to: "lib" },
+            { from: "src/manifest.json" },
+            { from: "src/key.pem" }
         ])
     ]
-    // plugins: [
-    //     new HtmlWebpackPlugin({
-    //         title: "Spotify Controls",
-    //         filename: "popup.html",
-    //         template: "src/popup.html",
-    //         chunks: ["popup"]
-    //     })
-    // ]
 };

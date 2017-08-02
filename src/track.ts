@@ -8,5 +8,7 @@ export interface Track {
 	volume: number,
 	shuffle_on: boolean,
 	repeat_on: boolean,
-	mute_on: boolean
+	mute_on: boolean,
+	is_playing: boolean,
+	is_saved: boolean
 }

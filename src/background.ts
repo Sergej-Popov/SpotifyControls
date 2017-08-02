@@ -36,6 +36,9 @@ chrome.commands.onCommand.addListener(function (cmd) {
 		case "player-repeat":
 			bus.send("idea.cmd.player.repeat");
 			break;
+		case "player-save":
+			bus.send("idea.cmd.player.save");
+			break;
 		default:
 			break;
 	}
@@ -76,6 +79,10 @@ bus.on("idea.cmd.player.repeat", async (evt: any) => {
 bus.on("idea.cmd.player.mute", async (evt: any) => {
 	if (!tabId) return;
 	await asynchrome.tabs.executeScript(tabId, { code: "agent.Mute()" });
+});
+bus.on("idea.cmd.player.save", async (evt: any) => {
+	if (!tabId) return;
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Save()" });
 });
 
 bus.on("idea.track.changed", async (evt: any) => {

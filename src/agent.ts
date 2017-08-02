@@ -27,7 +27,9 @@ class Agent {
       volume: this.GetVolume(),
       shuffle_on: this.GetShuffleState(),
       repeat_on: this.GetRepeatState(),
-      mute_on: this.GetMuteState()
+      mute_on: this.GetMuteState(),
+      is_playing: this.GetPlayState(),
+      is_saved: this.GetSavedState()
     };
   }
 
@@ -56,6 +58,13 @@ class Agent {
   public Mute() {
     (this._player.querySelector(".volume-bar button") as HTMLElement).click();
   };
+
+  public Save() {
+    var playButton = (this._player.querySelector('.spoticon-add-16') as HTMLElement);
+    if (!playButton) playButton = (this._player.querySelector('.spoticon-added-16') as HTMLElement);
+    playButton.click();
+  };
+
   public Rewind(target: number) {
     var elem = (this._player.querySelector('.progress-bar') as HTMLElement);
     console.log(elem);
@@ -148,6 +157,22 @@ class Agent {
     try {
       var repeatButton = this._player.querySelector(".volume-bar button");
       return repeatButton.classList.contains("spoticon-volume-off-16")
+    } catch (error) {
+      return undefined;
+    }
+  }
+  
+  public GetPlayState() {
+    try {
+      return !!this._player.querySelector('.spoticon-pause-16');
+    } catch (error) {
+      return undefined;
+    }
+  }
+  
+  public GetSavedState() {
+    try {
+      return !!this._player.querySelector('.spoticon-added-16');
     } catch (error) {
       return undefined;
     }

@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "Spotify Hotkeys, Controls & Notifications",
 	"description": "This extension adds hotkeys, notifications and playback controls for Spotify Web App, now you can control music from anywhere",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"author": [
 		"IdeaSoftware",
 		"Sergej Popov"
@@ -53,6 +53,10 @@
 		},
 		"player-repeat": {
 			"description": "Toggle Repeat",
+			"global": false
+		},
+		"player-save": {
+			"description": "Toggle Save",
 			"global": false
 		}
 	},
