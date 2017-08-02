@@ -1,55 +1,70 @@
 {
-  "manifest_version": 2,
-
-  "name": "Spotify Hotkeys, Controls & Notifications",
-  "description": "This extension adds hotkeys, notifications and playback controls for Spotify Web App, now you can control music from anywhere",
-  "version": "1.4.0",
-  
-  "author": ["IdeaSoftware", "Sergej Popov"],
-
-  "icons": { "16": "images/icon16.png",
-           "48": "images/icon48.png",
-          "128": "images/icon128.png" },
-  
-  "browser_action": {
-    "default_icon": "images/icon48.png",
-    "default_popup": "popup.html"
-  },
-  "background": {
-    "scripts": ["background.js"]
-  },
-   "commands": {
-	  "player-toggle": {
+	"manifest_version": 2,
+	"name": "Spotify Hotkeys, Controls & Notifications",
+	"description": "This extension adds hotkeys, notifications and playback controls for Spotify Web App, now you can control music from anywhere",
+	"version": "1.5.0",
+	"author": [
+		"IdeaSoftware",
+		"Sergej Popov"
+	],
+	"icons": {
+		"16": "images/icon16.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	},
+	"browser_action": {
+		"default_icon": "images/icon48.png",
+		"default_popup": "popup.html"
+	},
+	"background": {
+		"scripts": [
+			"background.js"
+		]
+	},
+	"commands": {
+		"player-toggle": {
 			"suggested_key": {
-			"default": "Alt+Shift+P"
+				"default": "MediaPlayPause"
+			},
+			"description": "Play/Pause",
+			"global": true
 		},
-		"description": "Play/Pause",
-		"global": true
-	  },
-	  "player-next": {
+		"player-next": {
 			"suggested_key": {
-			"default": "Alt+Shift+Right"
+				"default": "MediaNextTrack"
+			},
+			"description": "Next Track",
+			"global": true
 		},
-		"description": "Next Track",
-		"global": true
-	  },
-	  "player-previous": {
+		"player-previous": {
 			"suggested_key": {
-			"default": "Alt+Shift+Left"
+				"default": "MediaPrevTrack"
+			},
+			"description": "Previous Track",
+			"global": true
 		},
-		"description": "Previous Track",
-		"global": true
-	  }
-  },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "permissions": [
-	"tabs",
-    "activeTab",
-	"notifications",
-	"storage",
-	"https://*.spotify.com/",
-    "*://*.cloudfront.net/*",
-    "*://*.scdn.co/*",
-    "*://lyrics.wikia.com/*"
-  ]
+		"player-mute": {
+			"description": "Mute",
+			"global": false
+		},
+		"player-shuffle": {
+			"description": "Toggle Shuffle",
+			"global": false
+		},
+		"player-repeat": {
+			"description": "Toggle Repeat",
+			"global": false
+		}
+	},
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"notifications",
+		"storage",
+		"https://*.spotify.com/",
+		"*://*.cloudfront.net/*",
+		"*://*.scdn.co/*",
+		"*://lyrics.wikia.com/*"
+	]
 }

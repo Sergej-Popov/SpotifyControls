@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "zip": "bestzip uploads/SpotifyControls.latest.zip dist/*"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.47",
     "awesome-typescript-loader": "^3.2.1",
+    "bestzip": "^1.1.4",
     "copy-webpack-plugin": "^4.0.1",
     "file-loader": "^0.11.2",
     "html-loader": "^0.4.5",
@@ -28,6 +30,5 @@
     "typescript": "^2.4.2",
     "url-loader": "^0.5.9",
     "webpack": "^3.3.0"
-  },
-  "dependencies": {}
+  }
 }

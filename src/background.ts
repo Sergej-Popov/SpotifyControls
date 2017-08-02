@@ -1,6 +1,9 @@
-import { newGuid } from "./utils";
+import { newGuid, delay } from "./utils";
 import { Bus } from "./message-bus"
 import { Track } from "./track";
+import { Lyric } from "./lyric";
+import { Storage } from "./storage";
+import { asynchrome } from "./asynchrome";
 
 
 let bus = new Bus();
@@ -10,7 +13,8 @@ let tabId: number = null;
 let cache_artist: string = null;
 let cache_title: string = null;
 
-plantAgent();
+
+(async () => { await plantAgent() })();
 
 chrome.commands.onCommand.addListener(function (cmd) {
 	switch (cmd) {
@@ -23,46 +27,58 @@ chrome.commands.onCommand.addListener(function (cmd) {
 		case "player-previous":
 			bus.send("idea.cmd.player.previous");
 			break;
+		case "player-mute":
+			bus.send("idea.cmd.player.mute");
+			break;
+		case "player-shuffle":
+			bus.send("idea.cmd.player.shuffle");
+			break;
+		case "player-repeat":
+			bus.send("idea.cmd.player.repeat");
+			break;
 		default:
 			break;
 	}
 })
 
 clearInterval(heartBeatInterval);
-heartBeat();
+(async () => { await heartBeat() })();
+
 heartBeatInterval = setInterval(function () {
-	heartBeat();
+	(async () => { await heartBeat() })();
 }, 700);
 
 bus.on("idea.agent.planted", function (evt: any) {
 	tabId = evt.tabId;
 });
-bus.on("idea.agent.lost", function (evt: any) {
-});
 
 
-bus.on("idea.cmd.player.toggle", function (evt: any) {
+bus.on("idea.cmd.player.toggle", async (evt: any) => {
 	if (!tabId) return;
-	chrome.tabs.executeScript(tabId, { code: "agent.Toggle()" }, function () { })
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Toggle()" });
 });
-bus.on("idea.cmd.player.next", function (evt: any) {
+bus.on("idea.cmd.player.next", async (evt: any) => {
 	if (!tabId) return;
-	chrome.tabs.executeScript(tabId, { code: "agent.Next()" }, function () { })
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Next()" });
 });
-bus.on("idea.cmd.player.previous", function (evt: any) {
+bus.on("idea.cmd.player.previous", async (evt: any) => {
 	if (!tabId) return;
-	chrome.tabs.executeScript(tabId, { code: "agent.Previous()" }, function () { })
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Previous()" });
 });
-bus.on("idea.cmd.player.shuffle", function (evt: any) {
+bus.on("idea.cmd.player.shuffle", async (evt: any) => {
 	if (!tabId) return;
-	chrome.tabs.executeScript(tabId, { code: "agent.Shuffle()" }, function () { })
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Shuffle()" });
 });
-bus.on("idea.cmd.player.repeat", function (evt: any) {
+bus.on("idea.cmd.player.repeat", async (evt: any) => {
 	if (!tabId) return;
-	chrome.tabs.executeScript(tabId, { code: "agent.Repeat()" }, function () { })
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Repeat()" });
+});
+bus.on("idea.cmd.player.mute", async (evt: any) => {
+	if (!tabId) return;
+	await asynchrome.tabs.executeScript(tabId, { code: "agent.Mute()" });
 });
 
-bus.on("idea.track.changed", function (evt: any) {
+bus.on("idea.track.changed", async (evt: any) => {
 
 	var options = {
 		type: "basic",
@@ -73,107 +89,92 @@ bus.on("idea.track.changed", function (evt: any) {
 		// buttons: [{ title: "next", iconUrl: "/images/next.png"}, { title: "next", iconUrl: "/images/next.png"}],
 		isClickable: true
 	}
-	chrome.notifications.create(newGuid(), options, function (notificationId) {
-		setTimeout(function () { chrome.notifications.clear(notificationId, function (wasCleared) { }) }, 5000);
-	});
+
+	var notificationId = await asynchrome.notifications.create(newGuid(), options);
+	await delay(5000);
+	await asynchrome.notifications.clear(notificationId);
+
 })
 
-bus.on("idea.track.changed", function (evt: any) {
+bus.on("idea.track.changed", async (evt: any) => {
 
-	getLyrics(evt.artist, evt.title);
+	await getLyrics(evt.artist, evt.title);
 });
 
-function getLyrics(artist: string, title: string) {
+async function getLyrics(artist: string, title: string) {
+	var response = await window.fetch("http://lyrics.wikia.com/api.php?action=lyrics&artist=" + artist + "&song=" + title + "&fmt=json");
+	var data = await response.text();
+	let song = eval(data);
+	let lyric: Lyric = song;
 
-	window.fetch("http://lyrics.wikia.com/api.php?action=lyrics&artist=" + artist + "&song=" + title + "&fmt=json")
-		.then(function (response) {
-			return response.text();
-		})
-		.then(function (data) {
-			var lyrics = eval(data)
-			if (lyrics.lyrics.toLowerCase() == "not found") {
-				chrome.storage.local.remove('lyrics');
-				if (title.indexOf(" - ") > -1)
-					getLyrics(artist, title.substring(0, title.indexOf(" - ")));
-			}
-			else {
-				var lines = lyrics.lyrics.split(/\r\n|\r|\n/).filter(function (line: any) { return line.replace(/\s/g, "") == "" ? false : true }).splice(0, 4);
-				var lyr = "";
-				for (var i in lines) {
-					if (lyr.length > 120) break;
-					lyr += ("\r\n" + lines[i].replace("[...]", ""));
-				}
-				lyrics.lyrics = lyr + "..";
-				chrome.storage.local.set({ 'lyrics': lyrics });
-			}
-		}).catch(function (err) {
-			chrome.storage.local.remove('lyrics');
-		})
+	if (lyric.lyrics.toLowerCase() == "not found") {
+		Storage.Remove("lyric");
+		if (title.indexOf(" - ") > -1)
+			await getLyrics(artist, title.substring(0, title.indexOf(" - ")));
+	}
+	else {
+		var lines = lyric.lyrics
+			.split(/\r\n|\r|\n/)
+			.filter(function (line: any) { return line.replace(/\s/g, "") == "" ? false : true })
+			.splice(0, 4);
+			
+		var lyr = "";
+		for (var i in lines) {
+			if (lyr.length > 120) break;
+			lyr += ("\r\n" + lines[i].replace("[...]", ""));
+		}
+		lyric.lyrics = lyr + "..";
+
+		Storage.Set<Lyric>("lyric", lyric);
+	}
 }
 
 chrome.notifications.onClicked.addListener(function (evt: any) {
 	bus.send("idea.cmd.player.next");
 })
 
-function heartBeat() {
-
-
+async function heartBeat() {
 	if (!tabId) {
-		plantAgent();
+		await plantAgent();
 		return;
 	};
 
-	chrome.tabs.get(tabId, function (tab) {
-		if (!tab) {
-			tabId = undefined;
-		}
-	})
+	let tab = await asynchrome.tabs.get(tabId);
+	if (!tab) {
+		await plantAgent();
+		return;
+	};
 
-	if (!tabId) return;
+	let tracks = await asynchrome.tabs.executeScript(tabId, { code: 'agent.GetTrackInfo()' }) as Track[];
 
-	chrome.tabs.executeScript(tabId, { code: 'agent.GetTrackInfo()' }, function (data) {
+	if(!tracks || tracks.length < 1 || !tracks[0]) {
+		await plantAgent();
+		return;
+	}
 
-		if (!data || !data[0]) return;
+	let track = tracks[0];
 
-		var track = data[0] as Track;
-		bus.send("idea.track.updated", track);
+	bus.send("idea.track.updated", track);
 
-		if (cache_artist != track.artist || cache_title != track.title) {
-			cache_artist = track.artist;
-			cache_title = track.title;
+	if (cache_artist != track.artist || cache_title != track.title) {
+		cache_artist = track.artist;
+		cache_title = track.title;
 
-			bus.send("idea.track.changed", track);
-		}
-	});
+		bus.send("idea.track.changed", track);
+	}
 }
 
 
-function plantAgent() {
-	chrome.tabs.query({ url: "https://player.spotify.com/*" }, function (tabs) {
-		if (tabs.length > 0) {
-			chrome.tabs.executeScript(tabs[0].id, { file: "agent.js" }, function () {
-				bus.send("idea.agent.planted", { tabId: tabs[0].id });
-			});
-		}
-		else {
-			chrome.tabs.query({ url: "https://play.spotify.com/*" }, function (tabs) {
-				if (tabs.length > 0) {
-					chrome.tabs.executeScript(tabs[0].id, { file: "agent.js" }, function () {
-						bus.send("idea.agent.planted", { tabId: tabs[0].id });
-					});
-				}
-				else {
-					chrome.tabs.query({ url: "https://open.spotify.com/*" }, function (tabs) {
-						if (tabs.length > 0) {
-							chrome.tabs.executeScript(tabs[0].id, { file: "agent.js" }, function () {
-								bus.send("idea.agent.planted", { tabId: tabs[0].id });
-							});
-						}
-						else
-							bus.send("idea.agent.lost");
-					});
-				}
-			});
-		}
-	});
+async function plantAgent() {
+	let tabs = await asynchrome.tabs.query({ url: "https://player.spotify.com/*" });
+
+	if (tabs.length < 1) tabs = await asynchrome.tabs.query({ url: "https://play.spotify.com/*" });
+	if (tabs.length < 1) tabs = await asynchrome.tabs.query({ url: "https://open.spotify.com/*" });
+	if (tabs.length < 1) {
+		bus.send("idea.agent.lost");
+		return;
+	}
+
+	await asynchrome.tabs.executeScript(tabs[0].id, { file: "agent.js" });
+	bus.send("idea.agent.planted", { tabId: tabs[0].id });
 }

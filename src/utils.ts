@@ -7,3 +7,9 @@ export function newGuid(): string {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
+
+export function delay(ms: number) {
+    return new Promise<void>(function(resolve) {
+        setTimeout(resolve, ms);
+    });
+}

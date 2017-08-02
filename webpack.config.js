@@ -25,6 +25,10 @@ module.exports = {
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
         ]
     },
+    watch: true,
+    watchOptions:{
+        ignored: /node_modules/
+    },
 
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
@@ -38,7 +42,8 @@ module.exports = {
             // {output}/file.txt
             { from: "src/popup.html" },
             { from: "src/images", to: "images"},
-            { from: "src/manifest.json"}
+            { from: "src/manifest.json"},
+            { from: "src/key.pem"}
         ])
     ]
     // plugins: [

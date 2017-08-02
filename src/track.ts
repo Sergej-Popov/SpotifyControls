@@ -5,6 +5,8 @@ export interface Track {
 	progress: number,
 	elapsed: string,
 	length: string,
+	volume: number,
 	shuffle_on: boolean,
 	repeat_on: boolean,
+	mute_on: boolean
 }

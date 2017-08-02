@@ -28,7 +28,7 @@
 		
 		#controls {
 			width: 250px;
-			height:85px;
+			height:100px;
 			text-align: center;
     		padding: 5px 0;
 		}
@@ -89,6 +89,33 @@
 		
 		#repeat.active {
 			background-position: -298px -371px;
+		}
+
+		#mute {
+			width: 25px;
+			height: 20px;
+			margin-left: -23px;
+			background-position: -340px -338px;
+		}
+
+		#mute.muted {
+			background-position: -340px -369px;
+		}
+
+		#volume-bar {
+			width: 100px;
+			height: 5px;
+			border-radius: 3px;
+			background-color: #3e3e40;
+			margin-bottom: 10px;
+			display: inline-table;
+		}
+		
+		#volume-level {
+			width: 50px;
+			height: 5px;
+			border-radius: 3px;
+			background-color: #84bd00;
 		}
 		
 		#track-artist {
@@ -232,6 +259,12 @@
 			</div>
 			<div id="shuffle" class="control"></div>
 			<div id="repeat" class="control"></div>
+			<div>
+				<div id="mute" class="control"></div>
+				<div id="volume-bar">
+					<div id="volume-level"></div>
+				</div>
+			</div>
 		</div>
 
 		<div id="lyrics" class="hidden">
@@ -242,7 +275,7 @@
 				<span><a href="#" id="hotkeys-link" target="_blank">SetUp Hotkeys</a></span>
 			</div>
 			<div id="help">
-				<span id="donation">Like this? <a href="#" id="paypal">Buy me a beer ;)</a></span>
+				<span id="donation">Like this? <a href="#" id="paypal">Buy me a beer</a> ;)</span>
 				<br />
 				<span id="rate-outer">..and please <a href="#" id="rate">rate!</a> &#8902;&#8902;&#8902;&#8902;&#8902;</span>
 				<br />
