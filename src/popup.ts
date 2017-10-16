@@ -1,122 +1,148 @@
-import { Bus } from "./message-bus"
+import { Logger } from "./logger";
 import { Lyric } from "./lyric";
+import { Bus } from "./message-bus";
+import { Resources } from "./resources";
 import { Storage } from "./storage";
 import { Track } from "./track";
+import { delay } from "./utils";
 
-let bus = new Bus();
+class Main {
+    private _bus: Bus;
+    private _logger: Logger = new Logger("Main");
 
-setTimeout(function () {
-	console.log("No need to hack around.. This app is open source: https://github.com/Sergej-Popov/SpotifyControls");
-	console.log("Learned a thing or two? Buy me a beer: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRUHY87YGGRLY (PayPal donation)");
-	console.log("And don't forget to rate! https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews")
-}, 2000);
+    constructor() {
+        this._logger.debug("ctor");
+        this._bus = new Bus();
+    }
 
-bus.on("idea.track.updated", async (evt: Track) => {
-	document.querySelector('#main').classList.remove('no-player');
-	(document.querySelector('#track-progress') as HTMLElement).style.width = (document.querySelector('#track-bar').clientWidth * evt.progress) + "px";
-	(document.querySelector('#volume-level') as HTMLElement).style.width = (document.querySelector('#volume-bar').clientWidth * evt.volume) + "px";
-	document.querySelector('#track-elapsed').innerHTML = evt.elapsed;
-	evt.shuffle_on ? document.querySelector('#shuffle').classList.add('active') : document.querySelector('#shuffle').classList.remove('active')
-	evt.repeat_on ? document.querySelector('#repeat').classList.add('active') : document.querySelector('#repeat').classList.remove('active')
-	if (evt.mute_on) {
-		document.querySelector('#mute').classList.add('fa-volume-off');
-		document.querySelector('#mute').classList.remove('fa-volume-up');
-	}
-	else {
-		document.querySelector('#mute').classList.add('fa-volume-up');
-		document.querySelector('#mute').classList.remove('fa-volume-off');
-	}
-	if (evt.is_playing) {
-		document.querySelector('#toggle').classList.add('fa-pause-circle-o');
-		document.querySelector('#toggle').classList.remove('fa-play-circle-o');
-	}
-	else {
-		document.querySelector('#toggle').classList.add('fa-play-circle-o');
-		document.querySelector('#toggle').classList.remove('fa-pause-circle-o');
-	}
-	if (evt.is_saved) {
-		document.querySelector('#save').classList.add('fa-check');
-		document.querySelector('#save').classList.remove('fa-plus');
-	}
-	else {
-		document.querySelector('#save').classList.add('fa-plus');
-		document.querySelector('#save').classList.remove('fa-check');
-	}
+    public async initialize() {
+        this._logger.debug("init");
 
-	document.querySelector('#track-artist').innerHTML = evt.artist;
-	document.querySelector('#track-title').innerHTML = evt.title;
-	if (!!evt.art)
-		document.querySelector('#track-art').setAttribute('src', evt.art);
-	document.querySelector('#track-length').innerHTML = evt.length;
+        this._bus.on("idea.track.updated", async (evt: Track) => { await this.updateTrackInfo(evt); });
+        this._bus.on("idea.track.changed", async (evt: Track) => { await this.updateTrack(evt); });
 
-	let lyric = await Storage.Get<Lyric>("lyric");
-	if (lyric) {
-		document.querySelector('#lyrics-link').setAttribute('href', lyric.url);
-		document.querySelector('#lyrics-text').innerHTML = lyric.lyrics;
-		document.querySelector('#lyrics').classList.remove('hidden');
-	}
-	else {
-		document.querySelector('#lyrics').classList.add('hidden');
-	}
-});
+        await this.hideActions();
+        this.registerClicks();
+        this.printConsoleGreetings();
+    }
 
-bus.on("idea.track.changed", function (evt: Track) {
+    private async updateTrackInfo(track: Track) {
+        this._logger.debug("updating tack info", track);
 
-	document.querySelector('#main').classList.remove('no-player');
+        document.querySelector("#main").classList.remove("no-player");
+        (document.querySelector("#track-progress") as HTMLElement).style.width =
+            (document.querySelector("#track-bar").clientWidth * track.progress) + "px";
+        (document.querySelector("#volume-level") as HTMLElement).style.width =
+            (document.querySelector("#volume-bar").clientWidth * track.volume) + "px";
+        document.querySelector("#track-elapsed").innerHTML = track.elapsed;
+        track.shuffle_on ? document.querySelector("#shuffle").classList.add("active") : document.querySelector("#shuffle").classList.remove("active");
+        track.repeat_on ? document.querySelector("#repeat").classList.add("active") : document.querySelector("#repeat").classList.remove("active");
 
-	document.querySelector('#track-artist').innerHTML = evt.artist;
-	document.querySelector('#track-title').innerHTML = evt.title;
-	document.querySelector('#track-art').setAttribute('src', evt.art);
-	document.querySelector('#lyrics').classList.add('hidden');
+        if (track.mute_on) {
+            document.querySelector("#mute").classList.add("fa-volume-off");
+            document.querySelector("#mute").classList.remove("fa-volume-up");
+        } else {
+            document.querySelector("#mute").classList.add("fa-volume-up");
+            document.querySelector("#mute").classList.remove("fa-volume-off");
+        }
+        if (track.is_playing) {
+            document.querySelector("#toggle").classList.add("fa-pause-circle-o");
+            document.querySelector("#toggle").classList.remove("fa-play-circle-o");
+        } else {
+            document.querySelector("#toggle").classList.add("fa-play-circle-o");
+            document.querySelector("#toggle").classList.remove("fa-pause-circle-o");
+        }
+        if (track.is_saved) {
+            document.querySelector("#save").classList.add("fa-check");
+            document.querySelector("#save").classList.remove("fa-plus");
+        } else {
+            document.querySelector("#save").classList.add("fa-plus");
+            document.querySelector("#save").classList.remove("fa-check");
+        }
 
-});
+        document.querySelector("#track-artist").innerHTML = track.artist;
+        document.querySelector("#track-title").innerHTML = track.title;
+        if (!!track.art)
+            document.querySelector("#track-art").setAttribute("src", track.art);
+        document.querySelector("#track-length").innerHTML = track.length;
 
+        let lyric = await Storage.Get<Lyric>("lyric");
+        if (lyric) {
+            document.querySelector("#lyrics-link").setAttribute("href", lyric.url);
+            document.querySelector("#lyrics-text").innerHTML = lyric.lyrics;
+            document.querySelector("#lyrics").classList.remove("hidden");
+        } else {
+            document.querySelector("#lyrics").classList.add("hidden");
+        }
+    }
 
-document.addEventListener('DOMContentLoaded', async () => {
+    private updateTrack(track: Track) {
+        this._logger.debug("updating tack", track);
 
-	var controls = document.getElementsByClassName('control');
+        document.querySelector("#main").classList.remove("no-player");
+        document.querySelector("#track-artist").innerHTML = track.artist;
+        document.querySelector("#track-title").innerHTML = track.title;
+        document.querySelector("#track-art").setAttribute("src", track.art);
+        document.querySelector("#lyrics").classList.add("hidden");
+    }
 
-	if (await Storage.Get<Boolean>("rated")) (document.querySelector('#rate-outer') as HTMLElement).style.display = "none";
+    private async hideActions() {
+        if (await Storage.Get<boolean>("rated")) (document.querySelector("#rate-outer") as HTMLElement).style.display = "none";
+        if (await Storage.Get<boolean>("donated")) (document.querySelector("#donation") as HTMLElement).style.display = "none";
+    }
 
-	if (await Storage.Get<Boolean>("donated")) (document.querySelector('#donation') as HTMLElement).style.display = "none";
+    private async registerClicks() {
+        let controls = document.getElementsByClassName("control");
 
-	for (var i = 0; i < controls.length; i++) {
-		controls[i].addEventListener('click', function (evt) {
-			bus.send("idea.cmd.player." + evt.srcElement.id);
-		});
-	}
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < controls.length; i++) {
+            controls[i].addEventListener("click", (evt) => {
+                this._logger.debug(`click: ${evt.srcElement.id}`);
+                this._bus.send("idea.cmd.player." + evt.srcElement.id);
+            });
+        }
 
-	// document.querySelector('#track-bar').addEventListener("click", (evt: MouseEvent) => {
-	// 	var target = Math.round(evt.offsetX / 210 * 100) / 100;
-	// 	console.log(target);
-	// 	chrome.tabs.executeScript(Idea.tabId, { code: "agent.Rewind("+target+")" }, function () { })
-	// });
+        document.querySelector("#notification a").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: notification");
+            chrome.tabs.create({ url: Resources.urlSpotify });
+            evt.preventDefault();
+        });
 
+        document.querySelector("#settings").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: settings");
+            chrome.tabs.create({ url: Resources.urlChromeCommands });
+            evt.preventDefault();
+        });
 
-	document.querySelector('#notification a').addEventListener("click", (evt: MouseEvent) => {
-		chrome.tabs.create({ url: "http://play.spotify.com" });
-		evt.preventDefault();
-	});
+        document.querySelector("#contribute").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: contribute");
+            chrome.tabs.create({ url: Resources.urlOss });
+            evt.preventDefault();
+        });
 
-	document.querySelector('#settings').addEventListener("click", (evt: MouseEvent) => {
-		chrome.tabs.create({ url: "chrome://extensions/configureCommands" });
-		evt.preventDefault();
-	});
+        document.querySelector("#paypal").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: paypal");
+            chrome.tabs.create({ url: Resources.urlPayPal });
+            Storage.Set("donated", true);
+            evt.preventDefault();
+        });
 
-	document.querySelector('#contribute').addEventListener("click", (evt: MouseEvent) => {
-		chrome.tabs.create({ url: "https://github.com/Sergej-Popov/SpotifyControls" });
-		evt.preventDefault();
-	});
+        document.querySelector("#rate").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: rate");
+            chrome.tabs.create({ url: Resources.urlReviews });
+            Storage.Set("rated", true);
+            evt.preventDefault();
+        });
+    }
 
-	document.querySelector('#paypal').addEventListener("click", (evt: MouseEvent) => {
-		chrome.tabs.create({ url: "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRUHY87YGGRLY" });
-		Storage.Set("donated", true);
-		evt.preventDefault();
-	});
+    private printConsoleGreetings() {
+        this._logger.info(Resources.msgDontHack);
+        this._logger.info(Resources.msgBuyBeer);
+        this._logger.info(Resources.msgRate);
+    }
+}
 
-	document.querySelector('#rate').addEventListener("click", (evt: MouseEvent) => {
-		chrome.tabs.create({ url: "https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews" });
-		Storage.Set("rated", true);
-		evt.preventDefault();
-	});
+document.addEventListener("DOMContentLoaded", async () => {
+    let main = new Main();
+    await main.initialize();
 });

@@ -4,12 +4,12 @@ export function newGuid(): string {
             .toString(16)
             .substring(1);
     }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
+    return s4() + s4() + "-" + s4() + "-" + s4() + "-" +
+        s4() + "-" + s4() + s4() + s4();
 }
 
 export function delay(ms: number) {
-    return new Promise<void>(function(resolve) {
+    return new Promise<void>((resolve) => {
         setTimeout(resolve, ms);
     });
 }
