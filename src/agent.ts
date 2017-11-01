@@ -121,7 +121,8 @@ class Agent {
 
   public GetLength() {
     try {
-      return this._player.querySelector(".progress-bar + .playback-bar__progress-time").innerHTML;
+      let all = this._player.querySelectorAll(".playback-bar__progress-time");
+      return all[all.length - 1].innerHTML;
     } catch (error) {
       return undefined;
     }
