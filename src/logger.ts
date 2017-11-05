@@ -1,5 +1,8 @@
 export class Logger {
-    private _level: LogLevel = LogLevel.Info;
+    get _level(): LogLevel {
+        return (window as any).logLevel || LogLevel.Warn;
+    }
+
     private _name: string;
 
     constructor(name: string) {

@@ -1,4 +1,5 @@
 import { Notifications, Tabs } from "./asynchrome";
+import { Logger } from "./logger";
 import { Lyric } from "./lyric";
 import { Bus } from "./message-bus";
 import { Storage } from "./storage";
@@ -8,6 +9,7 @@ import { delay, newGuid } from "./utils";
 class Process {
 
     private _bus: Bus = new Bus();
+    private _logger = new Logger("Backgroud Process");
 
     private heartBeatInterval: number = null;
     private tabId: number = null;
@@ -22,6 +24,8 @@ class Process {
     }
 
     public async plantAgent() {
+        this._logger.info("Planting Agent");
+
         let tabs = await Tabs.query({ url: "https://player.spotify.com/*" });
 
         if (tabs.length < 1) tabs = await Tabs.query({ url: "https://play.spotify.com/*" });
@@ -43,6 +47,8 @@ class Process {
     }
 
     private registerHotKeys() {
+        this._logger.info("Registering hotkeys");
+
         chrome.commands.onCommand.addListener((cmd) => {
             switch (cmd) {
                 case "player-toggle":
@@ -77,6 +83,7 @@ class Process {
     }
 
     private subscribe() {
+        this._logger.info("Subscribing");
 
         this._bus.on("idea.agent.planted", (evt: any) => {
             this.tabId = evt.tabId;
@@ -112,12 +119,17 @@ class Process {
         });
 
         this._bus.on("idea.track.changed", async (evt: any) => {
+            if (await Storage.Get<boolean>("notifications-disabled")) {
+                this._logger.info("Notifications disabled - skipping");
+                return;
+            }
+            this._logger.info("Notifications enabled - displaying");
 
             let options = {
                 type: "basic",
                 iconUrl: evt.art,
-                title: evt.artist,
-                message: evt.title,
+                title: evt.title,
+                message: evt.artist,
                 contextMessage: "(click to skip)",
                 isClickable: true
             };
@@ -136,6 +148,8 @@ class Process {
     }
 
     private async getLyrics(artist: string, title: string) {
+        this._logger.info("Getting lyrics");
+
         let response = await window.fetch("http://lyrics.wikia.com/api.php?action=lyrics&artist=" + artist + "&song=" + title + "&fmt=json");
         let data = await response.text();
         // tslint:disable-next-line:no-eval
@@ -166,16 +180,22 @@ class Process {
     }
 
     private async heartBeat() {
+        this._logger.debug("Heartbeat");
+
         if (!this.tabId) {
+            this._logger.warn("Tab ID not set");
             await this.plantAgent();
             return;
         }
 
         let tab = await Tabs.get(this.tabId);
         if (!tab) {
+            this._logger.warn(`Tab ID ${this.tabId} not found`);
             await this.plantAgent();
             return;
         }
+
+        this._logger.debug(`Tab ID ${this.tabId} found`);
 
         let tracks = await Tabs.executeScript(this.tabId, { code: "agent.GetTrackInfo()" }) as Track[];
 

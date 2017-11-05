@@ -1,10 +1,10 @@
-type KeyLiteral = "lyric" | "track" | "rated" | "donated";
+type KeyLiteral = "lyric" | "track" | "rated" | "donated" | "notifications-disabled";
 
 export class Storage {
     public static async Get<T>(key: KeyLiteral): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             chrome.storage.local.get(key, (flag) => {
-                resolve(flag.lyric as T);
+                resolve(flag[key] as T);
             });
         });
     }

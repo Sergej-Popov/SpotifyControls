@@ -77,7 +77,7 @@ class Main {
     }
 
     private updateTrack(track: Track) {
-        this._logger.debug("updating tack", track);
+        this._logger.info("updating tack", track);
 
         document.querySelector("#main").classList.remove("no-player");
         document.querySelector("#track-artist").innerHTML = track.artist;
@@ -89,6 +89,7 @@ class Main {
     private async hideActions() {
         if (await Storage.Get<boolean>("rated")) (document.querySelector("#rate-outer") as HTMLElement).style.display = "none";
         if (await Storage.Get<boolean>("donated")) (document.querySelector("#donation") as HTMLElement).style.display = "none";
+        (document.querySelector("#settings-notification") as HTMLInputElement).checked = !(await Storage.Get<boolean>("notifications-disabled"));
     }
 
     private async registerClicks() {
@@ -108,8 +109,14 @@ class Main {
             evt.preventDefault();
         });
 
-        document.querySelector("#settings").addEventListener("click", (evt: MouseEvent) => {
+        document.querySelector("#settings-btn").addEventListener("click", (evt: MouseEvent) => {
             this._logger.debug("click: settings");
+            document.querySelector("#settings").classList.toggle("open");
+            evt.preventDefault();
+        });
+
+        document.querySelector("#hotkeys-lnk").addEventListener("click", (evt: MouseEvent) => {
+            this._logger.debug("click: hotkeys");
             chrome.tabs.create({ url: Resources.urlChromeCommands });
             evt.preventDefault();
         });
@@ -131,6 +138,13 @@ class Main {
             this._logger.debug("click: rate");
             chrome.tabs.create({ url: Resources.urlReviews });
             Storage.Set("rated", true);
+            evt.preventDefault();
+        });
+
+        document.querySelector("#settings-notification").addEventListener("change", (evt: MouseEvent) => {
+            let enabled = (evt.target as HTMLInputElement).checked;
+            this._logger.info(`change: notifications enabled: ${enabled}`);
+            Storage.Set("notifications-disabled", !enabled);
             evt.preventDefault();
         });
     }

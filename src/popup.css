@@ -14,6 +14,8 @@ a {
     padding: 5px;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 19px;
+    position: relative;
+    overflow: hidden;
 }
 
 #main.no-player #track-art{
@@ -202,17 +204,89 @@ i.fa{
     line-height: 14px;
 }
 
-#options {
+#credits {
     color: #88898c;
     padding: 0 10px;
     font-size: 11px;
 }
 
-#settings {
-    font-size: 15px;
-    float: right;
-}
-
 #donation {
     vertical-align: super;
 }
+
+#settings-btn {
+    position: absolute;
+    top: -22px;
+    right: 35px;
+    background: #1c1c1f;
+    border: 1px solid #444;
+    padding: 2px 7px 0 7px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: none;
+}
+
+#settings {
+    position: absolute;
+    height: 100px;
+    color: #88898c;
+    padding: 0 10px;
+    font-size: 11px;
+    width: 100%;
+    left: -2px;
+    bottom: -100px;
+    background: #1c1c1f;
+    border: 1px solid #666;
+    transition: .2s;
+}
+
+#settings.open {
+    transform: translateY(-70px);
+}
+
+#settings i.fa {
+    color: #84bd00;
+}
+
+/* Toggle checkbox */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 15px;
+    vertical-align: top;
+    margin: 0 3px;
+  }
+  
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #bbb;
+  transition: .4s;
+  border-radius: 15px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 1px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #84bd00;
+}
+
+input:checked + .slider:before {
+  transform: translateX(12px);
+}
+/* Toggle checkbox - end */
