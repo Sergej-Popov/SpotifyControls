@@ -8,12 +8,17 @@ class Agent {
   private _track: any = {
   };
 
+  constructor() {
+    this._logger.info("Agent planted");
+  }
+
   public isReady() {
     if (!this._player) return false;
     return true;
   }
 
   public GetTrackInfo(): Track {
+    this._logger.debug("Getting track info", {isReady: this.isReady()});
     if (!this.isReady())
       return undefined;
 

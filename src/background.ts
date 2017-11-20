@@ -21,29 +21,27 @@ class Process {
     constructor() {
         this.registerHotKeys();
         this.subscribe();
+
+        (async () => { await this.heartBeat(); })();
+        this._heartBeatInterval = setInterval(() => {
+            (async () => { await this.heartBeat(); })();
+        }, 700);
     }
 
     public async plantAgent() {
         this._logger.info("Planting Agent");
 
-        let tabs = await Tabs.query({ url: "https://player.spotify.com/*" });
+        let tabs = await Tabs.query({ url: "https://open.spotify.com/*" });
 
         if (tabs.length < 1) tabs = await Tabs.query({ url: "https://play.spotify.com/*" });
-        if (tabs.length < 1) tabs = await Tabs.query({ url: "https://open.spotify.com/*" });
+        if (tabs.length < 1) tabs = await Tabs.query({ url: "https://player.spotify.com/*" });
         if (tabs.length < 1) {
-            this._bus.send("idea.agent.lost");
+            this._logger.error("Spotify tab not found");
             return;
         }
 
-        await Tabs.executeScript(tabs[0].id, { file: "agent.js" });
-        this._bus.send("idea.agent.planted", { tabId: tabs[0].id });
-
-        clearInterval(this._heartBeatInterval);
-        (async () => { await this.heartBeat(); })();
-
-        this._heartBeatInterval = setInterval(() => {
-            (async () => { await this.heartBeat(); })();
-        }, 700);
+        this.tabId = tabs[0].id;
+        this._logger.debug(`Tab ID ${this.tabId}`);
     }
 
     private registerHotKeys() {
@@ -84,10 +82,6 @@ class Process {
 
     private subscribe() {
         this._logger.info("Subscribing");
-
-        this._bus.on("idea.agent.planted", (evt: any) => {
-            this.tabId = evt.tabId;
-        });
 
         this._bus.on("idea.cmd.player.toggle", async (evt: any) => {
             if (!this.tabId) return;
@@ -190,16 +184,18 @@ class Process {
 
         let tab = await Tabs.get(this.tabId);
         if (!tab) {
-            this._logger.warn(`Tab ID ${this.tabId} not found`);
+            this.tabId = null;
+            this._logger.warn("Tab ID not found", { tabId: this.tabId });
             await this.plantAgent();
             return;
         }
 
-        this._logger.debug(`Tab ID ${this.tabId} found`);
+        this._logger.debug("Tab ID found", { tabId: this.tabId });
 
-        let tracks = await Tabs.executeScript(this.tabId, { code: "agent.GetTrackInfo()" }) as Track[];
+        let tracks = (await Tabs.executeScript(this.tabId, { code: "agent.GetTrackInfo()" })) as Track[];
 
         if (!tracks || tracks.length < 1 || !tracks[0]) {
+            this._logger.debug("Agent returned no track info", { tabId: this.tabId, tracks: tracks });
             await this.plantAgent();
             return;
         }
@@ -219,4 +215,4 @@ class Process {
 
 let process = new Process();
 
-(async () => { await process.plantAgent(); })();
+// (async () => { await process.plantAgent(); })();
