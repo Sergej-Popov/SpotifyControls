@@ -13,6 +13,7 @@ class Agent {
   }
 
   public isReady() {
+    if (!this._player) this._player = document.querySelector(".now-playing-bar");
     if (!this._player) return false;
     return true;
   }
