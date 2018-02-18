@@ -18,18 +18,18 @@ a {
     overflow: hidden;
 }
 
-#main.no-player #track-art{
+#main.no-player #track-art {
     display: none;
 }
 
 #controls {
     width: 250px;
-    height:110px;
+    height: 110px;
     text-align: center;
     padding: 5px 0;
 }
 
-#playback-controls{
+#playback-controls {
     position: relative;
     height: 75px;
 }
@@ -40,24 +40,27 @@ a {
     vertical-align: middle;
 }
 
-i.fa{
+i.fa {
     color: #aaa;
 }
-#previous, #next {
+
+#previous,
+#next {
     font-size: 28px;
     position: absolute;
     top: 25px;
 }
 
-#previous{
+#previous {
     left: 60px;
 }
 
-#next{
+#next {
     right: 60px;
 }
 
-#previous:hover, #next:hover {
+#previous:hover,
+#next:hover {
     color: #fff;
     font-size: 30px;
 }
@@ -66,7 +69,7 @@ i.fa{
     font-size: 76px;
     -webkit-text-stroke: 7px #1c1c1f;
     position: absolute;
-    left:94px;
+    left: 94px;
 }
 
 #toggle:hover {
@@ -74,22 +77,30 @@ i.fa{
     color: #fff;
 }
 
-#shuffle, #repeat {
+#shuffle,
+#repeat {
     font-size: 20px;
     -webkit-text-stroke: 1px #1c1c1f;
 }
+
 #repeat {
     margin: 5px 10px;
 }
+
 #save {
     font-size: 20px;
     -webkit-text-stroke: 2px #1c1c1f;
 }
-#shuffle.active, #repeat.active, #save.fa-check {
+
+#shuffle.active,
+#repeat.active,
+#save.fa-check {
     color: #84bd00;
 }
 
-#shuffle:hover, #repeat:hover, #save:hover {
+#shuffle:hover,
+#repeat:hover,
+#save:hover {
     color: #fff;
 }
 
@@ -166,6 +177,7 @@ i.fa{
     border-radius: 3px;
     background-color: #84bd00;
 }
+
 #notification {
     margin-top: 10px;
     text-align: center;
@@ -177,6 +189,7 @@ i.fa{
 #main.no-player #notification {
     display: block;
 }
+
 #notification a {
     color: #88898c;
 }
@@ -185,23 +198,28 @@ i.fa{
     display: none;
 }
 
-#lyrics{
+#lyrics {
     max-height: 85px;
-    padding: 5px 0;
+    padding: 20px 0 5px 0;
     margin: 0 10px;
 }
-#lyrics a{
-    color:#ccc;
+
+#lyrics a {
+    color: #ccc;
 }
-#lyrics p{
-    max-height:100px;
+
+#lyrics p {
+    max-height: 100px;
     color: #88898c;
     font-size: 12px;
-    white-space: pre-line;
     overflow: hidden;
     margin-top: 0;
     margin-bottom: 0;
     line-height: 14px;
+}
+
+#lyrics-text {
+    white-space: pre-line;
 }
 
 #credits {
@@ -248,7 +266,9 @@ i.fa{
     color: #84bd00;
 }
 
+
 /* Toggle checkbox */
+
 .switch {
     position: relative;
     display: inline-block;
@@ -256,37 +276,39 @@ i.fa{
     height: 15px;
     vertical-align: top;
     margin: 0 3px;
-  }
-  
+}
+
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #bbb;
-  transition: .4s;
-  border-radius: 15px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #bbb;
+    transition: .4s;
+    border-radius: 15px;
 }
 
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 13px;
-  width: 13px;
-  left: 2px;
-  bottom: 1px;
-  background-color: white;
-  transition: .2s;
-  border-radius: 50%;
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 1px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
 }
 
-input:checked + .slider {
-  background-color: #84bd00;
+input:checked+.slider {
+    background-color: #84bd00;
 }
 
-input:checked + .slider:before {
-  transform: translateX(12px);
+input:checked+.slider:before {
+    transform: translateX(12px);
 }
+
+
 /* Toggle checkbox - end */

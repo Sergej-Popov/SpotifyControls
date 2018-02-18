@@ -69,7 +69,7 @@ class Main {
         let lyric = await Storage.Get<Lyric>("lyric");
         if (lyric) {
             document.querySelector("#lyrics-link").setAttribute("href", lyric.url);
-            document.querySelector("#lyrics-text").innerHTML = lyric.lyrics;
+            document.querySelector("#lyrics-text").innerHTML = lyric.lyrics.trim();
             document.querySelector("#lyrics").classList.remove("hidden");
         } else {
             document.querySelector("#lyrics").classList.add("hidden");
