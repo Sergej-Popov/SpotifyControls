@@ -3,5 +3,10 @@
     "dist": true,
     "node_modules": true,
     "uploads": true
-  }
+  },
+  "cSpell.words": [
+    "Guid",
+    "Spotify",
+    "unsave"
+  ]
 }

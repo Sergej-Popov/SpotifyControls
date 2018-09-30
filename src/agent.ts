@@ -1,9 +1,12 @@
 import { Logger } from "./logger";
 import { Track } from "./track";
+import { Bus } from "./message-bus";
+import { Notifications } from "./asynchrome";
 
 class Agent {
   private _player: Element = document.querySelector(".now-playing-bar");
   private _logger = new Logger("Agent");
+  private _bus = new Bus();
 
   private _track: any = {
   };
@@ -19,7 +22,7 @@ class Agent {
   }
 
   public GetTrackInfo(): Track {
-    this._logger.debug("Getting track info", {isReady: this.isReady()});
+    // this._logger.debug("Getting track info", { isReady: this.isReady() });
     if (!this.isReady())
       return undefined;
 
@@ -54,7 +57,7 @@ class Agent {
   }
 
   public Repeat() {
-    (this._player.querySelector(".spoticon-repeat-16") as HTMLElement).click();
+    ((this._player.querySelector(".spoticon-repeat-16") as HTMLElement) || (this._player.querySelector(".spoticon-repeatonce-16") as HTMLElement)).click();
   }
 
   public Shuffle() {
@@ -66,9 +69,15 @@ class Agent {
   }
 
   public Save() {
-    let playButton = (this._player.querySelector(".spoticon-add-16") as HTMLElement);
-    if (!playButton) playButton = (this._player.querySelector(".spoticon-added-16") as HTMLElement);
-    playButton.click();
+    let saveButton = (this._player.querySelector(".spoticon-heart-16") as HTMLElement);
+    let unsaveButton = (this._player.querySelector(".spoticon-heart-active-16") as HTMLElement);
+    (saveButton || unsaveButton).click();
+
+    this._bus.send("idea.evt.player.saved", {
+      feedback: saveButton ? "Added to your Favorite Songs" : "Removed from your Favorite Songs",
+      song: `${this.GetArtist()} - ${this.GetTitle()}`,
+      art: this.GetArt()
+    });
   }
 
   public Rewind(target: number) {
@@ -154,6 +163,7 @@ class Agent {
   public GetRepeatState() {
     try {
       let repeatButton = this._player.querySelector(".spoticon-repeat-16");
+      if (!repeatButton) repeatButton = this._player.querySelector(".spoticon-repeatonce-16");
       return repeatButton.classList.contains("control-button--active");
     } catch (error) {
       return undefined;
@@ -179,7 +189,7 @@ class Agent {
 
   public GetSavedState() {
     try {
-      return !!this._player.querySelector(".spoticon-added-16");
+      return !!this._player.querySelector(".spoticon-heart-active-16");
     } catch (error) {
       return undefined;
     }
