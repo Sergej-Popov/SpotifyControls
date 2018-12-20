@@ -55,7 +55,9 @@ export class Notifications {
       });
     });
 
-    await delay(5000);
+    let duration = await Storage.Get<number>("notifications-duration");
+    await delay((duration || 3) * 1000);
+
     await Notifications.clear(notificationId);
   }
 }

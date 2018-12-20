@@ -70,6 +70,9 @@ class Process {
         case "player-save":
           this._bus.send("idea.cmd.player.save");
           break;
+        case "player-show":
+          this._bus.send("idea.cmd.player.show");
+          break;
         default:
           break;
       }
@@ -113,7 +116,26 @@ class Process {
       await Tabs.executeScript(this.tabId, { code: "agent.Save()" });
     });
 
-    this._bus.on("idea.track.changed", async (evt: any) => {
+    this._bus.on("idea.cmd.player.show", async (evt: any) => {
+      if (!this.tabId) return;
+      let tracks = (await Tabs.executeScript(this.tabId, { code: "agent.GetTrackInfo()" })) as Track[];
+      if (!tracks || tracks.length < 1 || !tracks[0]) return;
+
+      let options = {
+        type: "progress",
+        iconUrl:  tracks[0].art,
+        title: tracks[0].title,
+        message: tracks[0].artist,
+        contextMessage: "(click to skip)",
+        isClickable: true,
+        progress: Math.round(tracks[0].progress * 100)
+      };
+      this._logger.info("Getting lyrics", tracks[0]);
+
+      await Notifications.create("next", options);
+    });
+
+    this._bus.on("idea.track.changed", async (evt: Track) => {
       let options = {
         type: "basic",
         iconUrl: evt.art,

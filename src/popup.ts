@@ -53,7 +53,7 @@ class Main {
       document.querySelector("#toggle").classList.add("fa-play-circle-o");
       document.querySelector("#toggle").classList.remove("fa-pause-circle-o");
     }
-    
+
     document.querySelector("#track-artist").innerHTML = track.artist;
     document.querySelector("#track-title").innerHTML = track.title;
     if (!!track.art)
@@ -139,6 +139,15 @@ class Main {
       let enabled = (evt.target as HTMLInputElement).checked;
       this._logger.info(`change: notifications enabled: ${enabled}`);
       Storage.Set("notifications-disabled", !enabled);
+      evt.preventDefault();
+    });
+
+    var duration = await Storage.Get<number>("notifications-duration");
+    (document.querySelector("#settings-notification-duration") as HTMLInputElement).value = (duration || 3).toString();
+    document.querySelector("#settings-notification-duration").addEventListener("change", (evt: MouseEvent) => {
+      let duration = ~~(evt.target as HTMLInputElement).value;
+      this._logger.info(`change: notification duration: ${duration}`);
+      Storage.Set("notifications-duration", duration);
       evt.preventDefault();
     });
   }
