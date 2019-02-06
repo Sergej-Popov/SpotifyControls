@@ -6,4 +6,5 @@
 
 build/
 dist/
+uploads/
 node_modules/
