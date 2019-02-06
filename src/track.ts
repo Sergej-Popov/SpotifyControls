@@ -9,6 +9,6 @@ export interface Track {
 	shuffle_on: boolean,
 	repeat_on: boolean,
 	mute_on: boolean,
-	is_playing: boolean,
+	is_paused: boolean,
 	is_saved: boolean
 }

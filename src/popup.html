@@ -2,94 +2,113 @@
 <html>
 
 <head>
-	<title>Spotify Controls</title>
-	<link rel="stylesheet" href="lib/css/font-awesome.min.css"></link>
-	<link rel="stylesheet" type="text/css" href="popup.css"></link>
-	<script src="popup.js"></script>
+  <title>Spotify Controls</title>
+  <link rel="stylesheet" href="lib/css/font-awesome.min.css">
+  </link>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+  </link>
+  <script src="popup.js"></script>
 </head>
 
 <body>
-	<div id="main" class="no-player">
-		<div id="notification">
-			<p>This extension requires Spotify to be opened.</p>
-			<a href="#" title="Open Spotify Web App">Open Spotify Web App</a>
-		</div>
-		<img id="track-art" src="images/404.jpg" alt="" />
-		<div id="track-info">
-			<div id="track-artist"></div>
-			<div id="track-title"></div>
-			<div id="track">
-				<div id="track-bar">
-					<div id="track-progress"></div>
-				</div>
-				<div id="track-elapsed">0:00</div>
-				<div id="track-length">0:00</div>
-			</div>
-		</div>
-		<div id="controls">
-			<div id="playback-controls">
-				<i class="fa fa-step-backward control" aria-hidden="true" title="Previous" id="previous"></i>
-				<i class="fa fa-play-circle-o control" aria-hidden="true" title="Play/Pause" id="toggle"></i>
-				<i class="fa fa-step-forward control" aria-hidden="true" title="Next" id="next"></i>
-			</div>
-			<i class="fa fa-random control" aria-hidden="true" title="Shuffle" id="shuffle"></i>
-			<i class="fa fa-repeat control" aria-hidden="true" title="Repeat" id="repeat"></i>
-			<i class="fa fa-heart control" aria-hidden="true" title="Save" id="save"></i>
-			<div>
+  <div id="main" class="no-player">
+    <div id="notification">
+      <p data-txt="require-open-tab">Requires web app to be opened.</p>
+      <a href="#" title="Open Web App" data-txt="open-tab-link">Open Web App</a>
+      <br />
+      <sub>On first installation - reload player page</sub>
+    </div>
+    <img id="track-art" src="images/404.jpg" alt="" />
+    <div id="track-info">
+      <div id="track-artist"></div>
+      <div id="track-title"></div>
+      <div id="track">
+        <div id="track-bar">
+          <div id="track-progress"></div>
+        </div>
+        <div id="track-elapsed">0:00</div>
+        <div id="track-length">0:00</div>
+      </div>
+    </div>
+    <div id="controls">
+      <div id="playback-controls">
+        <i class="fa fa-step-backward control" aria-hidden="true" title="Previous" id="previous"></i>
+        <i class="fa fa-play-circle-o control" aria-hidden="true" title="Play/Pause" id="toggle"></i>
+        <i class="fa fa-step-forward control" aria-hidden="true" title="Next" id="next"></i>
+      </div>
+      <i class="fa fa-random control" aria-hidden="true" title="Shuffle" id="shuffle"></i>
+      <i class="fa fa-repeat control" aria-hidden="true" title="Repeat" id="repeat"></i>
+      <i class="fa fa-heart control" aria-hidden="true" title="Save" id="save"></i>
+      <div id="volume-control">
+        <i class="fa fa-volume-up control" aria-hidden="true" title="Mute" id="mute"></i>
+        <div id="volume-bar">
+          <div id="volume-level"></div>
+        </div>
+      </div>
+    </div>
 
-				<i class="fa fa-volume-up control" aria-hidden="true" title="Mute" id="mute"></i>
-				<div id="volume-bar">
-					<div id="volume-level"></div>
-				</div>
-			</div>
-		</div>
+    <div id="lyrics" class="hidden">
+      <p>
+        <span id="lyrics-text"></span>
+        <br />
+        <a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a>
+        <p>
+    </div>
+    <div id="credits">
+      <div id="help">
+        <br />
+        <span id="donation">Like this?
+          <a href="#" id="paypal">Buy me a beer</a> ;)</span>
+        <br />
+        <span id="rate-outer">..and please
+          <a href="#" id="rate">rate!</a> &#8902;&#8902;&#8902;&#8902;&#8902;</span>
+        <br />
+        <span id="contributions">A developer?
+          <a href="#" id="contribute">Contribute here.</a>
+        </span>
+      </div>
+    </div>
+    <div id="settings">
 
-		<div id="lyrics" class="hidden">
-			<p>
-				<span id="lyrics-text"></span>
-				<br />
-				<a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a>
-				<p>
-		</div>
-		<div id="credits">
-			<div id="help">
-				<br />
-				<span id="donation">Like this?
-					<a href="#" id="paypal">Buy me a beer</a> ;)</span>
-				<br />
-				<span id="rate-outer">..and please
-					<a href="#" id="rate">rate!</a> &#8902;&#8902;&#8902;&#8902;&#8902;</span>
-				<br />
-				<span id="contributions">A developer?
-					<a href="#" id="contribute">Contribute here.</a>
-				</span>
-			</div>
-		</div>
-		<div id="settings">
+      <a href="#" id="settings-btn" target="_blank">
+        <i class="fa fa-cog" aria-hidden="true" title="SetUp Hotkeys"></i>
+      </a>
 
-			<a href="#" id="settings-btn" target="_blank">
-				<i class="fa fa-cog" aria-hidden="true" title="SetUp Hotkeys"></i>
-			</a>
-
-			<p>
-				<span>
-					<i class="fa fa-bell-o" aria-hidden="true" title="SetUp Hotkeys"> </i> Show notifications</span>
-
-				<label class="switch">
-					<input type="checkbox" id="settings-notification" />
-					<span class="slider"></span>
+      <p>
+        <span>
+          <i class="fa fa-bell-o" aria-hidden="true" title="SetUp Hotkeys"> </i> Notifications</span>
+      </p>
+      <p id="settings-notifications">
+        <span>
+          <i class="fa fa-forward" aria-hidden="true" title="SetUp Hotkeys"> </i> On track change
+        </span>
+        <label class="switch" title="Show notification when track changes">
+          <input type="checkbox" id="settings-notification" />
+          <span class="slider"></span>
         </label>
-        
-				<input type="number" min="1" max="5" id="settings-notification-duration" title="between 1 and 5 seconds"> seconds
-			</p>
+        <br />
+        <span>
+          <i class="fa fa-play" aria-hidden="true" title="SetUp Hotkeys"> </i> On play
+        </span>
+        <label class="switch" title="Show notification when play is restarted after pause">
+          <input type="checkbox" id="settings-notification-play" />
+          <span class="slider"></span>
+        </label>
+        <br />
+        <span>
+          <i class="fa fa-clock-o" aria-hidden="true" title="SetUp Hotkeys"> </i> Duration
+        </span>
+        <input type="number" min="1" max="5" id="settings-notification-duration" title="between 1 and 5 seconds">
+        seconds
+      </p>
 
-			<p>
-				<i class="fa fa-keyboard-o" aria-hidden="true" title="SetUp Hotkeys"></i>
-				<a href="#" id="hotkeys-lnk" target="_blank">Change hotkeys</a>
-			</p>
+      <p>
+        <i class="fa fa-keyboard-o" aria-hidden="true" title="SetUp Hotkeys"></i>
+        <a href="#" id="hotkeys-lnk" target="_blank">Change hotkeys</a>
+      </p>
 
-		</div>
-	</div>
+    </div>
+  </div>
 </body>
 
 </html>

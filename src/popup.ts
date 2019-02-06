@@ -4,7 +4,9 @@ import { Bus } from "./message-bus";
 import { Resources } from "./resources";
 import { Storage } from "./storage";
 import { Track } from "./track";
-import { delay } from "./utils";
+import { IConfig } from "config";
+import { Tabs } from "asynchrome";
+declare const __CONFIG__: IConfig;
 
 class Main {
   private _bus: Bus;
@@ -39,14 +41,16 @@ class Main {
     track.repeat_on ? document.querySelector("#repeat").classList.add("active") : document.querySelector("#repeat").classList.remove("active");
     track.is_saved ? document.querySelector("#save").classList.add("active") : document.querySelector("#save").classList.remove("active");
 
-    if (track.mute_on) {
+    let isTabMuted = await this.isTabMuted();
+
+    if (track.mute_on || isTabMuted) {
       document.querySelector("#mute").classList.add("fa-volume-off");
       document.querySelector("#mute").classList.remove("fa-volume-up");
     } else {
       document.querySelector("#mute").classList.add("fa-volume-up");
       document.querySelector("#mute").classList.remove("fa-volume-off");
     }
-    if (track.is_playing) {
+    if (track.is_paused) {
       document.querySelector("#toggle").classList.add("fa-pause-circle-o");
       document.querySelector("#toggle").classList.remove("fa-play-circle-o");
     } else {
@@ -70,6 +74,14 @@ class Main {
     }
   }
 
+  private async isTabMuted(): Promise<boolean> {
+    let tabs = await Tabs.query({ url: __CONFIG__.tabUrl });
+    if (tabs.length < 1) return false
+    var tabId = tabs[0].id;
+    let tab = await Tabs.get(tabId);
+    return tab.mutedInfo.muted;
+  }
+
   private updateTrack(track: Track) {
     this._logger.info("updating tack", track);
 
@@ -84,6 +96,10 @@ class Main {
     if (await Storage.Get<boolean>("rated")) (document.querySelector("#rate-outer") as HTMLElement).style.display = "none";
     if (await Storage.Get<boolean>("donated")) (document.querySelector("#donation") as HTMLElement).style.display = "none";
     (document.querySelector("#settings-notification") as HTMLInputElement).checked = !(await Storage.Get<boolean>("notifications-disabled"));
+    (document.querySelector("#settings-notification-play") as HTMLInputElement).checked = !(await Storage.Get<boolean>("notifications-play-disabled"));
+    if (!__CONFIG__.showVolumeBar) {
+      (document.querySelector("#volume-bar") as HTMLElement).style.display = "none";
+    }
   }
 
   private async registerClicks() {
@@ -99,7 +115,7 @@ class Main {
 
     document.querySelector("#notification a").addEventListener("click", (evt: MouseEvent) => {
       this._logger.debug("click: notification");
-      chrome.tabs.create({ url: Resources.urlSpotify });
+      chrome.tabs.create({ url: __CONFIG__.openPlayerUrl });
       evt.preventDefault();
     });
 
@@ -130,7 +146,7 @@ class Main {
 
     document.querySelector("#rate").addEventListener("click", (evt: MouseEvent) => {
       this._logger.debug("click: rate");
-      chrome.tabs.create({ url: Resources.urlReviews });
+      chrome.tabs.create({ url: __CONFIG__.reviewsUrl });
       Storage.Set("rated", true);
       evt.preventDefault();
     });
@@ -139,6 +155,13 @@ class Main {
       let enabled = (evt.target as HTMLInputElement).checked;
       this._logger.info(`change: notifications enabled: ${enabled}`);
       Storage.Set("notifications-disabled", !enabled);
+      evt.preventDefault();
+    });
+
+    document.querySelector("#settings-notification-play").addEventListener("change", (evt: MouseEvent) => {
+      let enabled = (evt.target as HTMLInputElement).checked;
+      this._logger.info(`change: notifications play enabled: ${enabled}`);
+      Storage.Set("notifications-play-disabled", !enabled);
       evt.preventDefault();
     });
 

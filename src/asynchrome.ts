@@ -17,12 +17,34 @@ export class Tabs {
       });
     });
   }
-  public static executeScript(tabId: number, details: chrome.tabs.InjectDetails): Promise<any[]> {
+  public static executeScript<T>(tabId: number, details: chrome.tabs.InjectDetails): Promise<T[]> {
     return new Promise((resolve, reject) => {
       chrome.tabs.executeScript(tabId, details, (tabs) => {
         resolve(tabs);
       });
     });
+  }
+
+  public static update(tabId: number, updateProperties: chrome.tabs.UpdateProperties): Promise<chrome.tabs.Tab> {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.update(tabId, updateProperties, (tab) => {
+        resolve(tab);
+      });
+    });
+  }
+  public static getCurrent(): Promise<chrome.tabs.Tab> {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.getCurrent((tab) => {
+        resolve(tab);
+      });
+    });
+  }
+
+  public static async toggleMute(tabId: number): Promise<boolean> {
+    let info = await Tabs.get(tabId);
+    let newState = !info.mutedInfo.muted;
+    await this.update(tabId, { muted: newState });
+    return newState;
   }
 }
 
@@ -39,15 +61,7 @@ export class Notifications {
 
   public static async create(prefix: string, options: chrome.notifications.NotificationOptions) {
 
-    // if (getChromeVersion() >= 70) {
-    //   options.silent = true;
-    // }
-
-    if (await Storage.Get<boolean>("notifications-disabled")) {
-      this._logger.info("Notifications disabled - skipping");
-      return;
-    }
-    this._logger.info("Notifications enabled - displaying");
+    this._logger.info("Notifications enabled - displaying", options);
 
     let notificationId = await new Promise<string>((resolve, reject) => {
       chrome.notifications.create(`${prefix}-${newGuid()}`, options, (id) => {

@@ -1,12 +1,14 @@
 {
   "files.exclude": {
-    "dist": true,
+    // "dist": true,
     "node_modules": true,
     "uploads": true
   },
   "cSpell.words": [
     "Guid",
     "Spotify",
+    "asynchrome",
+    "bestzip",
     "unsave"
   ]
 }

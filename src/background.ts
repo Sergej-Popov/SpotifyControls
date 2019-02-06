@@ -4,12 +4,13 @@ import { Lyric } from "./lyric";
 import { Bus } from "./message-bus";
 import { Storage } from "./storage";
 import { Track } from "./track";
-import { delay, newGuid } from "./utils";
+import { IConfig } from "config";
+declare const __CONFIG__: IConfig;
 
 class Process {
 
   private _bus: Bus = new Bus();
-  private _logger = new Logger("Backgroud Process");
+  private _logger = new Logger("Background Process");
 
   private heartBeatInterval: number = null;
   private tabId: number = null;
@@ -19,6 +20,7 @@ class Process {
   private _heartBeatInterval: number;
 
   constructor() {
+
     this.registerHotKeys();
     this.subscribe();
 
@@ -31,12 +33,10 @@ class Process {
   public async plantAgent() {
     this._logger.info("Planting Agent");
 
-    let tabs = await Tabs.query({ url: "https://open.spotify.com/*" });
+    let tabs = await Tabs.query({ url: __CONFIG__.tabUrl });
 
-    if (tabs.length < 1) tabs = await Tabs.query({ url: "https://play.spotify.com/*" });
-    if (tabs.length < 1) tabs = await Tabs.query({ url: "https://player.spotify.com/*" });
     if (tabs.length < 1) {
-      this._logger.error("Spotify tab not found");
+      this._logger.error("Player tab not found", __CONFIG__.tabUrl);
       return;
     }
 
@@ -87,6 +87,11 @@ class Process {
   private subscribe() {
     this._logger.info("Subscribing");
 
+    type InstalledEvent = { reason: "install" | "update" | "chrome_update" | "shared_module_update", previousVersion?: string, id?: string };
+    chrome.runtime.onInstalled.addListener((e: InstalledEvent) => {
+      this._logger.info("onInstalled event received", e);
+    });
+
     this._bus.on("idea.cmd.player.toggle", async (evt: any) => {
       if (!this.tabId) return;
       await Tabs.executeScript(this.tabId, { code: "agent.Toggle()" });
@@ -109,7 +114,11 @@ class Process {
     });
     this._bus.on("idea.cmd.player.mute", async (evt: any) => {
       if (!this.tabId) return;
-      await Tabs.executeScript(this.tabId, { code: "agent.Mute()" });
+      if (__CONFIG__.environment === "amazon") {
+        await Tabs.toggleMute(this.tabId);
+      } else {
+        await Tabs.executeScript(this.tabId, { code: `agent.Mute(${this.tabId})` });
+      }
     });
     this._bus.on("idea.cmd.player.save", async (evt: any) => {
       if (!this.tabId) return;
@@ -118,21 +127,20 @@ class Process {
 
     this._bus.on("idea.cmd.player.show", async (evt: any) => {
       if (!this.tabId) return;
-      let tracks = (await Tabs.executeScript(this.tabId, { code: "agent.GetTrackInfo()" })) as Track[];
+      let tracks = await Tabs.executeScript<Track>(this.tabId, { code: "agent.GetTrackInfo()" });
       if (!tracks || tracks.length < 1 || !tracks[0]) return;
 
       let options = {
         type: "progress",
-        iconUrl:  tracks[0].art,
+        iconUrl: tracks[0].art,
         title: tracks[0].title,
         message: tracks[0].artist,
         contextMessage: "(click to skip)",
         isClickable: true,
         progress: Math.round(tracks[0].progress * 100)
       };
-      this._logger.info("Getting lyrics", tracks[0]);
 
-      await Notifications.create("next", options);
+      await Notifications.create("progress", options);
     });
 
     this._bus.on("idea.track.changed", async (evt: Track) => {
@@ -145,7 +153,34 @@ class Process {
         isClickable: true
       };
 
-      await Notifications.create("next", options);
+      if (await Storage.Get<boolean>("notifications-disabled")) {
+        this._logger.info("Notifications for track change disabled - skipping");
+      } else {
+        await Notifications.create("next", options);
+      }
+    });
+
+    this._bus.on("idea.evt.player.playing", async (evt: Track) => {
+
+      if (!this.tabId) return;
+      let tracks = await Tabs.executeScript<Track>(this.tabId, { code: "agent.GetTrackInfo()" });
+      if (!tracks || tracks.length < 1 || !tracks[0]) return;
+     
+      let options = {
+        type: "progress",
+        iconUrl: tracks[0].art,
+        title: tracks[0].title,
+        message: tracks[0].artist,
+        contextMessage: "(click to skip)",
+        isClickable: true,
+        progress: Math.round(tracks[0].progress * 100)
+      };
+
+      if (await Storage.Get<boolean>("notifications-play-disabled")) {
+        this._logger.info("Notifications for play disabled - skipping");
+      } else {
+        await Notifications.create("playing", options);
+      }
     });
 
     this._bus.on("idea.track.changed", async (evt: any) => {
@@ -230,7 +265,10 @@ class Process {
 
     this._bus.send("idea.track.updated", track);
 
-    if (this._cacheArtist !== track.artist || this._cacheTitle !== track.title) {
+    let trackChanged = this._cacheArtist !== track.artist || this._cacheTitle !== track.title;
+    let artWorkReady = track.art && track.art !== "";
+
+    if (trackChanged && artWorkReady) {
       this._cacheArtist = track.artist;
       this._cacheTitle = track.title;
 

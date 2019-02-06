@@ -1,12 +1,17 @@
 {
   "name": "spotify-controls",
-  "version": "1.4.0",
+  "version": "2.0.1",
   "description": "Hotkeys, notifications and playback controls for Spotify Web App",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "zip": "bestzip uploads/SpotifyControls.latest.zip dist/*"
+    "build-watch-sp": "webpack --env=spotify -w",
+    "build-watch-am": "webpack --env=amazon -w",
+    "zip-sp": "bestzip uploads/SpotifyControls.latest.zip dist/spotify",
+    "zip-am": "bestzip uploads/AmazonMusicControls.latest.zip dist/amazon",
+    "pack-sp": "webpack --env=spotify && npm run zip-sp",
+    "pack-am": "webpack --env=amazon && npm run zip-am",
+    "pack": "npm run pack-sp && npm run pack-am"
   },
   "repository": {
     "type": "git",
@@ -23,6 +28,7 @@
     "awesome-typescript-loader": "^3.2.1",
     "bestzip": "^1.1.4",
     "copy-webpack-plugin": "^4.0.1",
+    "extended-define-webpack-plugin": "^0.1.3",
     "source-map-loader": "^0.2.1",
     "typescript": "^2.4.2",
     "webpack": "^3.3.0"

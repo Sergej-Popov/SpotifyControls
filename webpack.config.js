@@ -1,43 +1,73 @@
 let CopyWebpackPlugin = require('copy-webpack-plugin');
+var ExtendedDefinePlugin = require('extended-define-webpack-plugin');
+const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+
+let _getParam = (name) => process.argv.find(p => p.startsWith(`--${name}=`)).split("=")[1];
+
+let env = _getParam("env");
+
+
+const config = {
+  amazon: {
+    environment: env,
+    tabUrl: "https://music.amazon.co.uk/*",
+    showVolumeBar: false,
+    openPlayerUrl: "https://music.amazon.co.uk",
+    reviewsUrl: "https://chrome.google.com/webstore/detail/amazon-web-app-playback/lnkimoaahjmlmbiafbfjdjdnmmoeecoo/reviews"
+  },
+  spotify: {
+    environment: env,
+    tabUrl: "https://*.spotify.com/*",
+    showVolumeBar: true,
+    openPlayerUrl: "https://open.spotify.com",
+    reviewsUrl: "https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews"
+  }
+}
 
 module.exports = {
-    entry: {
-        popup: "./src/popup.ts",
-        background: "./src/background.ts",
-        agent: "./src/agent.ts"
-    },
-    output: {
-        filename: "[name].js",
-        path: __dirname + "/dist"
-    },
+  entry: {
+    popup: `./src/popup.ts`,
+    background: "./src/background.ts",
+    agent: `./src/${env}/agent.ts`
+  },
+  output: {
+    filename: "[name].js",
+    path: __dirname + `/dist/${env}`
+  },
 
-    devtool: "source-map",
+  devtool: "source-map",
 
-    resolve: {
-        extensions: [".ts", ".js", ".json"]
-    },
-
-    module: {
-        rules: [
-            { test: /\.ts$/, loader: "awesome-typescript-loader" },
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
-        ]
-    },
-    watch: true,
-    watchOptions: {
-        ignored: /node_modules/
-    },
-    externals: {
-        "chrome": "chrome"
-    },
+  resolve: {
+    extensions: [".ts", ".js", ".json"],
     plugins: [
-        new CopyWebpackPlugin([
-            { from: "src/popup.html" },
-            { from: "src/popup.css" },
-            { from: "src/images", to: "images" },
-            { from: "src/lib", to: "lib" },
-            { from: "src/manifest.json" },
-            { from: "src/key.pem" }
-        ])
+      new TsConfigPathsPlugin()
     ]
+  },
+
+  module: {
+    rules: [
+      { test: /\.ts$/, loader: "awesome-typescript-loader" },
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+    ]
+  },
+  watchOptions: {
+    ignored: /node_modules/
+  },
+  externals: {
+    "chrome": "chrome"
+  },
+  plugins: [
+    new CopyWebpackPlugin([
+      { from: "src/popup.html" },
+      { from: `src/${env}/popup.css` },
+      { from: "src/images", to: "images" },
+      { from: `src/${env}/images`, to: "images" },
+      { from: "src/lib", to: "lib" },
+      { from: `src/${env}/manifest.json` },
+      { from: `src/${env}/key.pem` }
+    ]),
+    new ExtendedDefinePlugin({
+      __CONFIG__: config[env]
+    })
+  ]
 };

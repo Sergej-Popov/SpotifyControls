@@ -1,4 +1,4 @@
-type KeyLiteral = "lyric" | "track" | "rated" | "donated" | "notifications-disabled"| "notifications-duration";
+type KeyLiteral = "lyric" | "track" | "rated" | "donated" | "notifications-disabled"| "notifications-duration" | "notifications-play-disabled";
 
 export class Storage {
     public static async Get<T>(key: KeyLiteral): Promise<T> {
