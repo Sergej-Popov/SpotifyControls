@@ -78,9 +78,17 @@ class Process {
       }
     });
 
+    console.info("Setting up notification listeners")
     chrome.notifications.onClicked.addListener((evt: any) => {
-      console.log(evt);
+      console.info("Notification clicked", evt);
       this._bus.send("idea.cmd.player.next");
+    });
+    chrome.notifications.onButtonClicked.addListener((notificationId: string, buttonIndex: number) => {
+      console.info("Notification button clicked", { notificationId, buttonIndex });
+      this._bus.send("idea.cmd.player.next");
+    });
+    chrome.notifications.onClosed.addListener(function (notificationId: string, byUser: boolean) {
+      console.info("onClosed", { notificationId, byUser });
     });
   }
 
@@ -90,8 +98,27 @@ class Process {
     type InstalledEvent = { reason: "install" | "update" | "chrome_update" | "shared_module_update", previousVersion?: string, id?: string };
     chrome.runtime.onInstalled.addListener((e: InstalledEvent) => {
       this._logger.info("onInstalled event received", e);
+
+      
+      console.info("Setting up notification listeners")
+      chrome.notifications.onClicked.addListener((evt: any) => {
+        console.info("Notification clicked", evt);
+        this._bus.send("idea.cmd.player.next");
+      });
+      chrome.notifications.onButtonClicked.addListener((notificationId: string, buttonIndex: number) => {
+        console.info("Notification button clicked", { notificationId, buttonIndex });
+        this._bus.send("idea.cmd.player.next");
+      });
     });
 
+    this._bus.on("idea.cmd.player.rewind", async (evt: any) => {
+      if (!this.tabId) return;
+      await Tabs.executeScript(this.tabId, { code: `agent.Rewind(${evt.location})` });
+    });
+    this._bus.on("idea.cmd.player.volume", async (evt: any) => {
+      if (!this.tabId) return;
+      await Tabs.executeScript(this.tabId, { code: `agent.SetVolume(${evt.level})` });
+    });
     this._bus.on("idea.cmd.player.toggle", async (evt: any) => {
       if (!this.tabId) return;
       await Tabs.executeScript(this.tabId, { code: "agent.Toggle()" });
@@ -130,14 +157,14 @@ class Process {
       let tracks = await Tabs.executeScript<Track>(this.tabId, { code: "agent.GetTrackInfo()" });
       if (!tracks || tracks.length < 1 || !tracks[0]) return;
 
-      let options = {
+      let options: chrome.notifications.NotificationOptions = {
         type: "progress",
         iconUrl: tracks[0].art,
         title: tracks[0].title,
         message: tracks[0].artist,
         contextMessage: "(click to skip)",
-        isClickable: true,
-        progress: Math.round(tracks[0].progress * 100)
+        progress: Math.round(tracks[0].progress * 100),
+        // buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       await Notifications.create("progress", options);
@@ -150,7 +177,7 @@ class Process {
         title: evt.title,
         message: evt.artist,
         contextMessage: "(click to skip)",
-        isClickable: true
+        // buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       if (await Storage.Get<boolean>("notifications-disabled")) {
@@ -165,15 +192,15 @@ class Process {
       if (!this.tabId) return;
       let tracks = await Tabs.executeScript<Track>(this.tabId, { code: "agent.GetTrackInfo()" });
       if (!tracks || tracks.length < 1 || !tracks[0]) return;
-     
+
       let options = {
         type: "progress",
         iconUrl: tracks[0].art,
         title: tracks[0].title,
         message: tracks[0].artist,
         contextMessage: "(click to skip)",
-        isClickable: true,
-        progress: Math.round(tracks[0].progress * 100)
+        progress: Math.round(tracks[0].progress * 100),
+        // buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       if (await Storage.Get<boolean>("notifications-play-disabled")) {
@@ -195,7 +222,7 @@ class Process {
         title: evt.feedback,
         message: evt.song,
         contextMessage: "(click to skip)",
-        isClickable: true
+        // buttons: [{ title: "previous" }, { title: "next" }]
       };
       Notifications.create("saved", options);
     });

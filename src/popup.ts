@@ -113,6 +113,22 @@ class Main {
       });
     }
 
+    document.querySelector("#track-bar").addEventListener("click", (evt: MouseEvent) => {
+      var box = document.querySelector("#track-bar").getBoundingClientRect();
+      this._logger.debug("click: track bar", { cx: evt.clientX, ox: evt.offsetX, lx: evt.layerX, x: evt.x, sx: evt.screenX, px: evt.pageX, loc: (evt.offsetX / box.width) });
+      this._bus.send("idea.cmd.player.rewind", {
+        location: evt.offsetX / box.width
+      });
+    });
+
+    document.querySelector("#volume-bar").addEventListener("click", (evt: MouseEvent) => {
+      this._logger.debug("click: volume bar");
+      var box = document.querySelector("#volume-bar").getBoundingClientRect();
+      this._bus.send("idea.cmd.player.volume", {
+        level: evt.offsetX / box.width
+      });
+    });
+
     document.querySelector("#notification a").addEventListener("click", (evt: MouseEvent) => {
       this._logger.debug("click: notification");
       chrome.tabs.create({ url: __CONFIG__.openPlayerUrl });

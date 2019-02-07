@@ -119,6 +119,7 @@ i.fa {
   background-color: #3e3e40;
   margin-bottom: 10px;
   display: inline-table;
+  cursor: pointer;
 }
 
 #volume-level {
@@ -160,7 +161,7 @@ i.fa {
   border-radius: 3px;
   background-color: #3e3e40;
   margin-bottom: 10px;
-  /*cursor: pointer;*/
+  cursor: pointer;
 }
 
 #track-elapsed {

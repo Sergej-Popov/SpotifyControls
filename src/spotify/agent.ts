@@ -84,7 +84,14 @@ class Agent {
   }
 
   public Rewind(target: number) {
-    let elem = (this._player.querySelector(".progress-bar") as HTMLElement);
+    let elem = (this._player.querySelector(".playback-bar .progress-bar") as HTMLElement);
+    this._logger.info(elem);
+    this._logger.info("rewinding to target" + target);
+    this._clickAt(elem, elem.offsetWidth * target);
+  }
+
+  public SetVolume(target: number) {
+    let elem = (this._player.querySelector(".volume-bar .progress-bar") as HTMLElement);
     this._logger.info(elem);
     this._logger.info("rewinding to target" + target);
     this._clickAt(elem, elem.offsetWidth * target);
@@ -148,7 +155,9 @@ class Agent {
 
   public GetVolume() {
     try {
-      return ~~((this._player.querySelector(".volume-bar .progress-bar__slider") as HTMLElement).style.left.replace("%", "")) / 100;
+      var bar = this._player.querySelector(".volume-bar .progress-bar__fg_wrapper").getBoundingClientRect() as DOMRect;
+      var prog = this._player.querySelector(".volume-bar .progress-bar__fg").getBoundingClientRect() as DOMRect;
+      return 1 - (bar.x - prog.x) / bar.width
     } catch (error) {
       return undefined;
     }
@@ -199,11 +208,15 @@ class Agent {
   }
 
   private _clickAt = (elem: HTMLElement, x: number) => {
+    let box = elem.getBoundingClientRect() as DOMRect;
     this._logger.info("rewinding to width" + x);
-    this._logger.info("rewinding to offset" + (elem.offsetLeft + x));
-    let evt = document.createEvent("MouseEvents");
-    evt.initMouseEvent("click", true, true, window, 0, elem.offsetLeft + x, 0, x, 6, false, false, false, false, 0, undefined);
-    elem.dispatchEvent(evt);
+    this._logger.info("rewinding to offset" + (box.x + x));
+    let down = document.createEvent("MouseEvents");
+    let up = document.createEvent("MouseEvents");
+    down.initMouseEvent("mousedown", true, true, window, null, 0, 0, box.x + x, box.y, false, false, false, false, 0, undefined);
+    up.initMouseEvent("mouseup", true, true, window, null, 0, 0, box.x + x, box.y, false, false, false, false, 0, undefined);
+    elem.dispatchEvent(down);
+    elem.dispatchEvent(up);
   }
 }
 

@@ -79,7 +79,7 @@ class Agent {
   }
 
   public Rewind(target: number) {
-    let elem = (this._player.querySelector(".progress-bar") as HTMLElement);
+    let elem = (this._player.querySelector(".sliderTrack") as HTMLElement);
     this._logger.info(elem);
     this._logger.info("rewinding to target" + target);
     this._clickAt(elem, elem.offsetWidth * target);
@@ -214,11 +214,15 @@ class Agent {
   }
 
   private _clickAt = (elem: HTMLElement, x: number) => {
+    let box = elem.getBoundingClientRect() as DOMRect;
     this._logger.info("rewinding to width" + x);
-    this._logger.info("rewinding to offset" + (elem.offsetLeft + x));
-    let evt = document.createEvent("MouseEvents");
-    evt.initMouseEvent("click", true, true, window, 0, elem.offsetLeft + x, 0, x, 6, false, false, false, false, 0, undefined);
-    elem.dispatchEvent(evt);
+    this._logger.info("rewinding to offset" + (box.x + x));
+    let down = document.createEvent("MouseEvents");
+    let up = document.createEvent("MouseEvents");
+    down.initMouseEvent("mousedown", true, true, window, null, 0, 0, box.x + x, box.y, false, false, false, false, 0, undefined);
+    up.initMouseEvent("mouseup", true, true, window, null, 0, 0, box.x + x, box.y, false, false, false, false, 0, undefined);
+    elem.dispatchEvent(down);
+    elem.dispatchEvent(up);
   }
 }
 

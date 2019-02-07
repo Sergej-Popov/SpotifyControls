@@ -1,6 +1,6 @@
 export class Logger {
     get _level(): LogLevel {
-        return (window as any).logLevel || LogLevel.Debug;
+        return (window as any).logLevel || LogLevel.Info;
     }
 
     private _name: string;
