@@ -58,6 +58,12 @@ class Process {
         case "player-previous":
           this._bus.send("idea.cmd.player.previous");
           break;
+        case "player-forward":
+          this._bus.send("idea.cmd.player.forward");
+          break;
+        case "player-backward":
+          this._bus.send("idea.cmd.player.backward");
+          break;
         case "player-mute":
           this._bus.send("idea.cmd.player.mute");
           break;
@@ -78,42 +84,26 @@ class Process {
       }
     });
 
-    console.info("Setting up notification listeners")
-    chrome.notifications.onClicked.addListener((evt: any) => {
-      console.info("Notification clicked", evt);
-      this._bus.send("idea.cmd.player.next");
-    });
     chrome.notifications.onButtonClicked.addListener((notificationId: string, buttonIndex: number) => {
-      console.info("Notification button clicked", { notificationId, buttonIndex });
-      this._bus.send("idea.cmd.player.next");
-    });
-    chrome.notifications.onClosed.addListener(function (notificationId: string, byUser: boolean) {
-      console.info("onClosed", { notificationId, byUser });
+      this._logger.info("Notification button clicked", { notificationId, buttonIndex });
+      this._bus.send(`idea.cmd.player.${buttonIndex == 0 ? "previous" : "next"}`);
     });
   }
 
   private subscribe() {
     this._logger.info("Subscribing");
 
-    type InstalledEvent = { reason: "install" | "update" | "chrome_update" | "shared_module_update", previousVersion?: string, id?: string };
-    chrome.runtime.onInstalled.addListener((e: InstalledEvent) => {
-      this._logger.info("onInstalled event received", e);
-
-      
-      console.info("Setting up notification listeners")
-      chrome.notifications.onClicked.addListener((evt: any) => {
-        console.info("Notification clicked", evt);
-        this._bus.send("idea.cmd.player.next");
-      });
-      chrome.notifications.onButtonClicked.addListener((notificationId: string, buttonIndex: number) => {
-        console.info("Notification button clicked", { notificationId, buttonIndex });
-        this._bus.send("idea.cmd.player.next");
-      });
-    });
-
     this._bus.on("idea.cmd.player.rewind", async (evt: any) => {
       if (!this.tabId) return;
       await Tabs.executeScript(this.tabId, { code: `agent.Rewind(${evt.location})` });
+    });
+    this._bus.on("idea.cmd.player.forward", async () => {
+      if (!this.tabId) return;
+      await Tabs.executeScript(this.tabId, { code: `agent.Forward()` });
+    });
+    this._bus.on("idea.cmd.player.backward", async () => {
+      if (!this.tabId) return;
+      await Tabs.executeScript(this.tabId, { code: `agent.Backward()` });
     });
     this._bus.on("idea.cmd.player.volume", async (evt: any) => {
       if (!this.tabId) return;
@@ -157,14 +147,14 @@ class Process {
       let tracks = await Tabs.executeScript<Track>(this.tabId, { code: "agent.GetTrackInfo()" });
       if (!tracks || tracks.length < 1 || !tracks[0]) return;
 
+
       let options: chrome.notifications.NotificationOptions = {
         type: "progress",
         iconUrl: tracks[0].art,
         title: tracks[0].title,
         message: tracks[0].artist,
-        contextMessage: "(click to skip)",
         progress: Math.round(tracks[0].progress * 100),
-        // buttons: [{ title: "previous" }, { title: "next" }]
+        buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       await Notifications.create("progress", options);
@@ -176,8 +166,7 @@ class Process {
         iconUrl: evt.art,
         title: evt.title,
         message: evt.artist,
-        contextMessage: "(click to skip)",
-        // buttons: [{ title: "previous" }, { title: "next" }]
+        buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       if (await Storage.Get<boolean>("notifications-disabled")) {
@@ -198,9 +187,8 @@ class Process {
         iconUrl: tracks[0].art,
         title: tracks[0].title,
         message: tracks[0].artist,
-        contextMessage: "(click to skip)",
         progress: Math.round(tracks[0].progress * 100),
-        // buttons: [{ title: "previous" }, { title: "next" }]
+        buttons: [{ title: "previous" }, { title: "next" }]
       };
 
       if (await Storage.Get<boolean>("notifications-play-disabled")) {
@@ -221,8 +209,7 @@ class Process {
         iconUrl: evt.art,
         title: evt.feedback,
         message: evt.song,
-        contextMessage: "(click to skip)",
-        // buttons: [{ title: "previous" }, { title: "next" }]
+        buttons: [{ title: "previous" }, { title: "next" }]
       };
       Notifications.create("saved", options);
     });
@@ -305,5 +292,3 @@ class Process {
 }
 
 let process = new Process();
-
-// (async () => { await process.plantAgent(); })();

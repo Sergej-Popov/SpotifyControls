@@ -19,7 +19,6 @@ class Agent {
   }
 
   public GetTrackInfo(): Track {
-    // this._logger.debug("Getting track info", { isReady: this.isReady() });
     if (!this.isReady())
       return undefined;
 
@@ -78,10 +77,20 @@ class Agent {
     });
   }
 
+  public Forward() {
+    var current = this.GetProgress();
+    this._logger.info("forward", { current });
+    this.Rewind(current >= 0.9 ? 0.99 : current + 0.1);
+  }
+  public Backward() {
+    var current = this.GetProgress();
+    this._logger.info("backward", { current });
+    this.Rewind(current <= 0.1 ? 0.01 : current - 0.1);
+  }
+
   public Rewind(target: number) {
     let elem = (this._player.querySelector(".sliderTrack") as HTMLElement);
-    this._logger.info(elem);
-    this._logger.info("rewinding to target" + target);
+    this._logger.info("rewinding", { target });
     this._clickAt(elem, elem.offsetWidth * target);
   }
 
@@ -215,8 +224,7 @@ class Agent {
 
   private _clickAt = (elem: HTMLElement, x: number) => {
     let box = elem.getBoundingClientRect() as DOMRect;
-    this._logger.info("rewinding to width" + x);
-    this._logger.info("rewinding to offset" + (box.x + x));
+    this._logger.info("click at", { x, offset: (box.x + x) });
     let down = document.createEvent("MouseEvents");
     let up = document.createEvent("MouseEvents");
     down.initMouseEvent("mousedown", true, true, window, null, 0, 0, box.x + x, box.y, false, false, false, false, 0, undefined);

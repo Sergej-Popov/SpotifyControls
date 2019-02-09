@@ -10,6 +10,9 @@
     "asynchrome",
     "bestzip",
     "elem",
+    "octokit",
+    "prerelease",
+    "repos",
     "unsave"
   ]
 }

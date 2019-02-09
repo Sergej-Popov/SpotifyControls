@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "Amazon Music Hotkeys, Controls, Notifications",
 	"description": "This extension adds hotkeys, notifications and playback controls for Amazon Music Web App, now you can control music from anywhere",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"author": [
 		"Sergej Popov"
 	],
@@ -50,6 +50,14 @@
 				"default": "MediaPrevTrack"
 			},
 			"description": "Previous Track",
+			"global": true
+		},
+		"player-forward": {
+			"description": "Rewind forward 10%",
+			"global": true
+		},
+		"player-backward": {
+			"description": "Rewind backward 10%",
 			"global": true
 		},
 		"player-shuffle": {
