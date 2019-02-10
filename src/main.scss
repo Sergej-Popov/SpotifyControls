@@ -1,3 +1,5 @@
+@import "theme.scss";
+
 body {
   margin: 0;
 }
@@ -7,7 +9,7 @@ a {
 }
 
 #main {
-  background-color: #1c1c1f;
+  background-color: $primaryColor;
   color: #fbfbfc;
   border-radius: 3px;
   width: 250px;
@@ -67,7 +69,7 @@ i.fa {
 
 #toggle {
   font-size: 76px;
-  -webkit-text-stroke: 7px #1c1c1f;
+  -webkit-text-stroke: 7px $primaryColor;
   position: absolute;
   left: 94px;
 }
@@ -80,7 +82,7 @@ i.fa {
 #shuffle,
 #repeat {
   font-size: 20px;
-  -webkit-text-stroke: 1px #1c1c1f;
+  -webkit-text-stroke: 1px $primaryColor;
 }
 
 #repeat {
@@ -89,13 +91,13 @@ i.fa {
 
 #save {
   font-size: 20px;
-  -webkit-text-stroke: 2px #1c1c1f;
+  -webkit-text-stroke: 2px $primaryColor;
 }
 
 #shuffle.active,
 #repeat.active,
 #save.active {
-  color: #84bd00;
+  color: $secondaryColor;
 }
 
 #shuffle:hover,
@@ -126,11 +128,14 @@ i.fa {
   width: 50px;
   height: 5px;
   border-radius: 3px;
-  background-color: #84bd00;
+  background-color: $secondaryColor;
 }
 
 #track-artist {
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #track-title {
@@ -176,7 +181,7 @@ i.fa {
   width: 100px;
   height: 5px;
   border-radius: 3px;
-  background-color: #84bd00;
+  background-color: $secondaryColor;
 }
 
 #notification {
@@ -237,7 +242,7 @@ i.fa {
   position: absolute;
   top: -22px;
   right: 35px;
-  background: #1c1c1f;
+  background: $primaryColor;
   border: 1px solid #444;
   padding: 2px 7px 0 7px;
   border-top-left-radius: 6px;
@@ -254,7 +259,7 @@ i.fa {
   width: 100%;
   left: -2px;
   bottom: -160px;
-  background: #1c1c1f;
+  background: $primaryColor;
   border: 1px solid #666;
   transition: .2s;
 }
@@ -264,11 +269,11 @@ i.fa {
 }
 
 #settings i.fa {
-  color: #84bd00;
+  color: $secondaryColor;
 }
 
 #settings-notifications {
-  margin-left:10px;
+  margin-left: 10px;
 }
 
 input#settings-notification-duration {
@@ -321,7 +326,7 @@ input#settings-notification-duration::-webkit-outer-spin-button {
 }
 
 input:checked+.slider {
-  background-color: #84bd00;
+  background-color: $secondaryColor;
 }
 
 input:checked+.slider:before {

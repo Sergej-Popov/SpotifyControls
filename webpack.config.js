@@ -1,6 +1,7 @@
 let CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtendedDefinePlugin = require('extended-define-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 let _getParam = (name) => process.argv.find(p => p.startsWith(`--${name}=`)).split("=")[1];
 
@@ -26,7 +27,10 @@ const config = {
 
 module.exports = {
   entry: {
-    popup: `./src/popup.ts`,
+    popup: [
+      `./src/popup.ts`,
+      `./src/main.scss`
+    ],
     background: "./src/background.ts",
     agent: `./src/${env}/agent.ts`
   },
@@ -47,7 +51,20 @@ module.exports = {
   module: {
     rules: [
       { test: /\.ts$/, loader: "awesome-typescript-loader" },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+      {
+        test: /\.scss$/,
+        use: [
+          "style-loader", // creates style nodes from JS strings
+          "css-loader", // translates CSS into CommonJS
+          {
+            loader: "sass-loader", // compiles Sass to CSS, using Node Sass by default
+            options: {
+              includePaths: [`src/${env}`]
+            }
+          }
+        ]
+      }
     ]
   },
   watchOptions: {
@@ -57,9 +74,10 @@ module.exports = {
     "chrome": "chrome"
   },
   plugins: [
+    new CleanWebpackPlugin([`dist/${env}`]),
     new CopyWebpackPlugin([
       { from: "src/popup.html" },
-      { from: `src/${env}/popup.css` },
+      // { from: `src/${env}/popup.css` },
       { from: "src/images", to: "images" },
       { from: `src/${env}/images`, to: "images" },
       { from: "src/lib", to: "lib" },

@@ -10,3 +10,5 @@ uploads/
 node_modules/
 
 secrets.json
+
+**/*.orig
