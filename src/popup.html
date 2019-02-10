@@ -3,8 +3,11 @@
 
 <head>
   <title>Spotify Controls</title>
-  <link rel="stylesheet" href="lib/css/font-awesome.min.css"></link>
+  <link rel="stylesheet" href="lib/css/font-awesome.min.css">
+  </link>
   <script src="popup.js"></script>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+  </link>
 </head>
 
 <body>
@@ -48,7 +51,7 @@
       <p>
         <span id="lyrics-text"></span>
         <br />
-        <a href="#" id="lyrics-link" target="_blank">full lyrics at LyricWikia</a>
+        <a href="#" id="lyrics-link" target="_blank">full lyrics at Lyrics Wiki</a>
         <p>
     </div>
     <div id="credits">
@@ -79,18 +82,12 @@
         <span>
           <i class="fa fa-forward" aria-hidden="true" title="SetUp Hotkeys"> </i> On track change
         </span>
-        <label class="switch" title="Show notification when track changes">
-          <input type="checkbox" id="settings-notification" />
-          <span class="slider"></span>
-        </label>
+        <x-setting key="notification" title="Show notification when track changes"></x-setting>
         <br />
         <span>
           <i class="fa fa-play" aria-hidden="true" title="SetUp Hotkeys"> </i> On play
         </span>
-        <label class="switch" title="Show notification when play is restarted after pause">
-          <input type="checkbox" id="settings-notification-play" />
-          <span class="slider"></span>
-        </label>
+        <x-setting key="notification-play" title="Show notification when track changes"></x-setting>
         <br />
         <span>
           <i class="fa fa-clock-o" aria-hidden="true" title="SetUp Hotkeys"> </i> Duration

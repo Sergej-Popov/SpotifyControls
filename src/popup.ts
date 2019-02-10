@@ -8,6 +8,10 @@ import { IConfig } from "config";
 import { Tabs } from "asynchrome";
 declare const __CONFIG__: IConfig;
 
+import { Setting } from "components/setting";
+
+Setting.name;
+
 class Main {
   private _bus: Bus;
   private _logger: Logger = new Logger("Main");
@@ -95,8 +99,6 @@ class Main {
   private async hideActions() {
     if (await Storage.Get<boolean>("rated")) (document.querySelector("#rate-outer") as HTMLElement).style.display = "none";
     if (await Storage.Get<boolean>("donated")) (document.querySelector("#donation") as HTMLElement).style.display = "none";
-    (document.querySelector("#settings-notification") as HTMLInputElement).checked = !(await Storage.Get<boolean>("notifications-disabled"));
-    (document.querySelector("#settings-notification-play") as HTMLInputElement).checked = !(await Storage.Get<boolean>("notifications-play-disabled"));
     if (!__CONFIG__.showVolumeBar) {
       (document.querySelector("#volume-bar") as HTMLElement).style.display = "none";
     }
@@ -164,20 +166,6 @@ class Main {
       this._logger.debug("click: rate");
       chrome.tabs.create({ url: __CONFIG__.reviewsUrl });
       Storage.Set("rated", true);
-      evt.preventDefault();
-    });
-
-    document.querySelector("#settings-notification").addEventListener("change", (evt: MouseEvent) => {
-      let enabled = (evt.target as HTMLInputElement).checked;
-      this._logger.info(`change: notifications enabled: ${enabled}`);
-      Storage.Set("notifications-disabled", !enabled);
-      evt.preventDefault();
-    });
-
-    document.querySelector("#settings-notification-play").addEventListener("change", (evt: MouseEvent) => {
-      let enabled = (evt.target as HTMLInputElement).checked;
-      this._logger.info(`change: notifications play enabled: ${enabled}`);
-      Storage.Set("notifications-play-disabled", !enabled);
       evt.preventDefault();
     });
 
