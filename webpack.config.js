@@ -10,14 +10,14 @@ let env = _getParam("env");
 const config = {
   amazon: {
     environment: env,
-    tabUrl: "https://music.amazon.co.uk/*",
+    tabUrlRegEx: /^http(s)?:\/\/music\.amazon\..+/,
     showVolumeBar: false,
-    openPlayerUrl: "https://music.amazon.co.uk",
+    openPlayerUrl: "https://music.amazon.com",
     reviewsUrl: "https://chrome.google.com/webstore/detail/amazon-web-app-playback/lnkimoaahjmlmbiafbfjdjdnmmoeecoo/reviews"
   },
   spotify: {
     environment: env,
-    tabUrl: "https://*.spotify.com/*",
+    tabUrlRegEx: /^http(s)?:\/\/\w+\.spotify\.com.+/,
     showVolumeBar: true,
     openPlayerUrl: "https://open.spotify.com",
     reviewsUrl: "https://chrome.google.com/webstore/detail/spotify-web-app-playback/goikghbjckploljhlfmjjfggccmlnbea/reviews"

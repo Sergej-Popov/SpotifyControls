@@ -1,12 +1,22 @@
 import { Logger } from "./logger";
 import { Storage } from "./storage";
-import { delay, newGuid, getChromeVersion } from "./utils";
+import { delay, newGuid } from "./utils";
+import { IConfig } from "config";
+
+declare const __CONFIG__: IConfig;
 
 export class Tabs {
   public static get(tabId: number): Promise<chrome.tabs.Tab> {
     return new Promise((resolve, reject) => {
       chrome.tabs.get(tabId, (tab) => {
         resolve(tab);
+      });
+    });
+  }
+  public static find(): Promise<chrome.tabs.Tab[]> {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({}, (tabs) => {
+        resolve(tabs.filter(t => __CONFIG__.tabUrlRegEx.test(t.url)));
       });
     });
   }

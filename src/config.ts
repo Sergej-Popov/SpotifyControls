@@ -1,6 +1,6 @@
 export interface IConfig {
   environment: "spotify" | "amazon",
-  tabUrl: string,
+  tabUrlRegEx: RegExp,
   showVolumeBar: boolean,
   openPlayerUrl: string,
   reviewsUrl: string

@@ -17,7 +17,7 @@ class Process {
 
   private _cacheArtist: string = null;
   private _cacheTitle: string = null;
-  private _heartBeatInterval: number;
+  private _heartBeatInterval: any;
 
   constructor() {
 
@@ -31,17 +31,17 @@ class Process {
   }
 
   public async plantAgent() {
-    this._logger.info("Planting Agent");
+    this._logger.debug("Planting Agent");
 
-    let tabs = await Tabs.query({ url: __CONFIG__.tabUrl });
+    let tabs = await Tabs.find();
 
     if (tabs.length < 1) {
-      this._logger.error("Player tab not found", __CONFIG__.tabUrl);
+      this._logger.error("Player tab not found", { pattern: __CONFIG__.tabUrlRegEx });
       return;
     }
 
     this.tabId = tabs[0].id;
-    this._logger.debug(`Tab ID ${this.tabId}`);
+    this._logger.debug(`Tab ID ${this.tabId}`, { tabs });
   }
 
   private registerHotKeys() {

@@ -1,6 +1,6 @@
 {
   "name": "spotify-controls",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "Hotkeys, notifications and playback controls for Spotify Web App",
   "main": "index.js",
   "scripts": {

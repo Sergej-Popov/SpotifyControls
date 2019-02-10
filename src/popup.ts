@@ -75,7 +75,7 @@ class Main {
   }
 
   private async isTabMuted(): Promise<boolean> {
-    let tabs = await Tabs.query({ url: __CONFIG__.tabUrl });
+    let tabs = await Tabs.find();
     if (tabs.length < 1) return false
     var tabId = tabs[0].id;
     let tab = await Tabs.get(tabId);
