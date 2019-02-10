@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "Amazon Music Hotkeys, Controls, Notifications",
 	"description": "This extension adds hotkeys, notifications and playback controls for Amazon Music Web App, now you can control music from anywhere",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"author": [
 		"Sergej Popov"
 	],
@@ -23,6 +23,7 @@
 	"content_scripts": [
 		{
 			"matches": [
+        "https://music.amazon.com/*",
         "https://music.amazon.co.uk/*",
         "https://music.amazon.es/*",
         "https://music.amazon.it/*",
@@ -92,6 +93,7 @@
 		"activeTab",
 		"notifications",
 		"storage",
+    "https://music.amazon.com/",
     "https://music.amazon.co.uk/",
     "https://music.amazon.es/",
     "https://music.amazon.it/",

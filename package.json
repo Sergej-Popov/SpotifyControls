@@ -1,16 +1,16 @@
 {
   "name": "spotify-controls",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Hotkeys, notifications and playback controls for Spotify Web App",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-watch-sp": "webpack --env=spotify -w",
-    "build-watch-am": "webpack --env=amazon -w",
+    "build-watch-sp": "webpack --env=spotify -w --mode=development",
+    "build-watch-am": "webpack --env=amazon -w --mode=development",
     "zip-sp": "bestzip uploads/SpotifyControls.latest.zip dist/spotify",
     "zip-am": "bestzip uploads/AmazonMusicControls.latest.zip dist/amazon",
-    "pack-sp": "webpack --env=spotify && npm run zip-sp",
-    "pack-am": "webpack --env=amazon && npm run zip-am",
+    "pack-sp": "webpack --env=spotify --mode=production && npm run zip-sp",
+    "pack-am": "webpack --env=amazon --mode=production && npm run zip-am",
     "pack": "npm run pack-sp && npm run pack-am",
     "release": "ts-node release.ts"
   },
@@ -26,18 +26,20 @@
   "homepage": "https://github.com/Sergej-Popov/SpotifyControls#readme",
   "devDependencies": {
     "@octokit/rest": "^16.15.0",
-    "@types/chrome": "0.0.47",
+    "@types/chrome": "0.0.79",
     "@types/fs-extra": "^5.0.4",
     "@types/node": "^10.12.24",
-    "awesome-typescript-loader": "^3.2.1",
-    "bestzip": "^1.1.4",
-    "copy-webpack-plugin": "^4.0.1",
+    "ajv": "~6.8.1",
+    "awesome-typescript-loader": "^5.2.1",
+    "bestzip": "^2.1.2",
+    "copy-webpack-plugin": "^4.6.0",
     "extended-define-webpack-plugin": "^0.1.3",
     "fs-extra": "^7.0.1",
-    "source-map-loader": "^0.2.1",
+    "source-map-loader": "^0.2.4",
     "ts-node": "^8.0.2",
-    "typescript": "^2.4.2",
-    "webpack": "^3.3.0"
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
   },
   "dependencies": {
     "prompt-async": "^0.9.9"
