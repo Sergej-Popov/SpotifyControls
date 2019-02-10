@@ -2,18 +2,25 @@ import * as Octokit from "@octokit/rest";
 import { ReposCreateReleaseResponse } from "@octokit/rest";
 import Logger from "./src/logger";
 import * as fs from "fs-extra";
-const prompt = require("prompt-async");
+import { getConfig, getVersion } from "./ci";
 
-prompt.start();
 const _logger = new Logger("release");
 let _octokit: Octokit;
 
+const run = async () => {
+  const config = await getConfig();
+  _octokit = new Octokit({
+    auth: `token ${config.github.token}`
+  });
 
-let getVersion = async () => {
-  let json = await fs.readFile("src/spotify/manifest.json", "utf-8");
-  let manifest = JSON.parse(json);
-  return manifest.version;
+  let version = await getVersion();
+  _logger.info(version);
+  let release = await createRelease(version);
+  await renameAssets(version);
+  await uploadAssets(`AmazonMusicControls.${version}.zip`, release.upload_url);
+  await uploadAssets(`SpotifyControls.${version}.zip`, release.upload_url);
 };
+
 
 let createRelease = async (version: string): Promise<ReposCreateReleaseResponse> => {
   let result = await _octokit.repos.createRelease({
@@ -54,17 +61,4 @@ let uploadAssets = async (file: string, url: string) => {
   _logger.info("Uploaded", { file, ...result.data })
 }
 
-
-(async () => {
-  const { token } = await prompt.get(["token"]);
-  _octokit = new Octokit({
-    auth: `token ${token}`
-  });
-
-  let version = await getVersion();
-  _logger.info(version);
-  let release = await createRelease(version);
-  await renameAssets(version);
-  await uploadAssets(`AmazonMusicControls.${version}.zip`, release.upload_url);
-  await uploadAssets(`SpotifyControls.${version}.zip`, release.upload_url);
-})();
+(async () => await run())();

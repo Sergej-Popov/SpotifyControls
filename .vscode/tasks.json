@@ -48,6 +48,16 @@
         "type": "npm",
         "script": "build-watch-sp",
         "problemMatcher": []
+      },
+      {
+        "type": "npm",
+        "script": "zip-am",
+        "problemMatcher": []
+      },
+      {
+        "type": "npm",
+        "script": "zip-sp",
+        "problemMatcher": []
       }
     ]
 }
