@@ -1,8 +1,8 @@
 import * as Octokit from "@octokit/rest";
 import { ReposCreateReleaseResponse } from "@octokit/rest";
-import Logger from "./src/logger";
 import * as fs from "fs-extra";
 import { getConfig, getVersion } from "./ci";
+import Logger from "./src/logger";
 
 const _logger = new Logger("release");
 let _octokit: Octokit;
@@ -21,7 +21,6 @@ const run = async () => {
   await uploadAssets(`SpotifyControls.${version}.zip`, release.upload_url);
 };
 
-
 let createRelease = async (version: string): Promise<ReposCreateReleaseResponse> => {
   let result = await _octokit.repos.createRelease({
     repo: "SpotifyControls",
@@ -34,7 +33,7 @@ let createRelease = async (version: string): Promise<ReposCreateReleaseResponse>
 
   _logger.info("Release created", result.data);
   return result.data;
-}
+};
 
 let renameAssets = async (version: string) => {
   _logger.info("renaming assets");
@@ -48,7 +47,7 @@ let uploadAssets = async (file: string, url: string) => {
 
   _logger.info("stats", { byteLength: buffer.buffer.byteLength });
 
-  var result = await _octokit.repos.uploadReleaseAsset({
+  let result = await _octokit.repos.uploadReleaseAsset({
     file: buffer.buffer,
     headers: {
       "content-type": "application/zip",
@@ -58,7 +57,7 @@ let uploadAssets = async (file: string, url: string) => {
     url: url
   });
 
-  _logger.info("Uploaded", { file, ...result.data })
-}
+  _logger.info("Uploaded", { file, ...result.data });
+};
 
 (async () => await run())();

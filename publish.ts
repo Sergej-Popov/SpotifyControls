@@ -1,8 +1,7 @@
-
-import * as fs from "fs-extra";
 import axios from "axios";
-import Logger from "./src/logger";
+import * as fs from "fs-extra";
 import { getConfig, getVersion, IConfig } from "./ci";
+import Logger from "./src/logger";
 
 const _logger = new Logger("publish");
 
@@ -21,7 +20,7 @@ const run = async () => {
   await uploadPackage(token, config.googleApi.spotifyAppIs, `SpotifyControls.${version}.zip`);
   await publish(token, config.googleApi.spotifyAppIs);
 
-}
+};
 
 const refreshToken = async (config: IConfig) => {
   _logger.info("refreshToken");
@@ -43,20 +42,20 @@ const uploadPackage = async (token: string, appId: string, file: string) => {
   _logger.info("uploadPackage", { token, appId, file });
   const path = `./uploads/${file}`;
   const buffer = await fs.readFile(path);
-  const url = `https://www.googleapis.com/upload/chromewebstore/v1.1/items/${appId}`
+  const url = `https://www.googleapis.com/upload/chromewebstore/v1.1/items/${appId}`;
   const result = await axios.put(url, buffer);
 
   _logger.info({ status: result.status, data: result.data });
 
   if (result.data.uploadState !== "SUCCESS") {
     _logger.info({ data: JSON.stringify(result.data) });
-    throw new Error(`Failed to upload a package`)
+    throw new Error(`Failed to upload a package`);
   }
 };
 
 const publish = async (token: string, appId: string) => {
   _logger.info("publish");
-  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${appId}/publish`
+  const url = `https://www.googleapis.com/chromewebstore/v1.1/items/${appId}/publish`;
   const result = await axios.post(url, {
   });
 

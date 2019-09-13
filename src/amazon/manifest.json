@@ -34,7 +34,8 @@
         "https://music.amazon.in/*",
         "https://music.amazon.co.jp/*",
         "https://music.amazon.co.nz/*",
-        "https://music.amazon.mx/*"
+        "https://music.amazon.mx/*",
+        "https://music.amazon.com.br/*"
 			],
 			"js": [
 				"agent.js"
