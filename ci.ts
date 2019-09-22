@@ -5,14 +5,13 @@ export interface IConfig {
     refreshToken: string;
     clientSecret: string;
     clientId: string;
-    spotifyAppIs: string;
+    spotifyAppId: string;
     amazonMusicAppId: string;
-  },
+  };
   github: {
     token: string;
-  }
+  };
 }
-
 
 export const getConfig = async () => {
   const json = await fs.readFile("./secrets.json", "utf-8");

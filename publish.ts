@@ -17,8 +17,8 @@ const run = async () => {
 // await uploadPackage(token, config.googleApi.amazonMusicAppId, `AmazonMusicControls.${version}.zip`);
   // await publish(token, config.googleApi.amazonMusicAppId);
 
-  await uploadPackage(token, config.googleApi.spotifyAppIs, `SpotifyControls.${version}.zip`);
-  await publish(token, config.googleApi.spotifyAppIs);
+  await uploadPackage(token, config.googleApi.spotifyAppId, `SpotifyControls.${version}.zip`);
+  await publish(token, config.googleApi.spotifyAppId);
 
 };
 

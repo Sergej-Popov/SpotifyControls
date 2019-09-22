@@ -219,7 +219,7 @@ class Process {
   private async getLyrics(artist: string, title: string) {
     this._logger.info("Getting lyrics");
 
-    let response = await window.fetch("http://lyrics.wikia.com/api.php?action=lyrics&artist=" + artist + "&song=" + title + "&fmt=json");
+    let response = await window.fetch("https://lyrics.fandom.com/api.php?action=lyrics&artist=" + artist + "&song=" + title + "&fmt=json");
     let data = await response.text();
     // tslint:disable-next-line:no-eval
     let song = eval(data);
