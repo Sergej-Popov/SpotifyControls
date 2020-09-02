@@ -33,7 +33,7 @@
     "ajv": "~6.8.1",
     "awesome-typescript-loader": "^5.2.1",
     "axios": "^0.18.1",
-    "bestzip": "^2.1.4",
+    "bestzip": "^2.1.7",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
